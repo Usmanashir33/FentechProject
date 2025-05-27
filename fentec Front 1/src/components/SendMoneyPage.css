@@ -1,0 +1,117 @@
+/* SendMoneyPage.css */
+
+.send-money-page {
+    width: 100%;
+    /* max-width: 600px; */
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.155);
+    overflow: hidden;
+    height: 100%;
+  }
+  .red-popup{
+    position: absolute;
+    top: 10%!important ;
+    bottom: unset!important;
+    z-index: 999999 !important;
+    background-color: rgba(254, 171, 171, 0.984) !important;
+    color: rgba(170, 4, 4, 0.735) !important;
+  }
+  .header-send {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #4caf50;
+    color: #fff ;
+    padding: 15px;
+    margin-bottom: 25px;
+    border-bottom: 3px solid #388e3c;
+    font-size: 18px;
+    font-weight: bold;
+  }
+  .RAccoHis{
+    top: 35px;
+    width: 100% !important;
+    left: -5px;
+  }
+  .header h1 {
+    font-size: 20px;
+    margin: 0;
+  }
+  
+  .header .history-icon {
+    font-size: 18px;
+    cursor: pointer;
+    transition: transform 0.3s;
+  }
+  
+  .header .history-icon:hover {
+    transform: scale(1.2);
+  }
+  
+  
+  .form-container {
+    text-align: center;
+  }
+  
+  h1 {
+    font-size: 24px;
+    color: #4caf50;
+    margin-bottom: 20px;
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+    text-align: left;
+  }
+  
+  label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  input[type="text"],
+  input[type="number"],
+  textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    box-sizing: border-box;
+  }
+  
+  input[type="number"]::-webkit-inner-spin-button, 
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  
+  textarea {
+    resize: none;
+    height: 80px;
+  }
+  
+  .submit-btn {
+    background: #4caf50;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  
+  .submit-btn:hover {
+    background: #45a049;
+  }
+  .end-input{
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+  }

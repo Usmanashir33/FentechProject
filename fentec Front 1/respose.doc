@@ -1,0 +1,11 @@
+{"event": "charge.completed",
+              "data": {"id": 6733333365663148881, "tx_ref": "seller-e8769aa0-58ff-4010-8235-ce0c612ce208", 
+                       "flw_ref": "100033250228122639448062700797", "device_fingerprint": "N/A", "amount": 13, "currency": "NGN",
+                       "charged_amount": 13, "app_fee": 0, "merchant_fee": 0,
+                       "processor_response": "received successfully", "auth_model": "AUTH", "ip": "::ffff:172.16.6.109", 
+        "narration": "seller-coinermk", "status": "successful", "payment_type": "bank_transfer", "created_at": "2025-02-28T12:26:43.000Z",
+        "account_id": 2694966,
+        "customer": {"id": 1138136175, "name": "coinermk Usman-Muhammad", "phone_number": "+2348166997172",
+                     "email": "coinermk@gmail.com", "created_at": "2025-02-27T20:19:58.000Z"}},
+              "meta_data": {"originatorname": "USMAN MUHAMMAD ASHIR", "bankname": "100033", 
+        "originatoramount": "N/A", "originatoraccountnumber": "704*******23"}, "event.type": "BANK_TRANSFER_TRANSACTION"}

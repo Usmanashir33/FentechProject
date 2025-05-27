@@ -1,0 +1,243 @@
+.withdrawal-container {
+    width: 100%;
+    height: 100%;
+    max-height: 100%;
+    padding: 1rem;
+    border-radius: 10px;
+    overflow-y: hidden;
+    background-color: #f4f4f4;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    position: relative; /* required for absolute children */
+}
+
+  
+  h2 {
+    text-align: center;
+    color: #333;
+  }
+  
+  .withdrawal-form,
+  .restore-form {
+    margin-top: 1rem; 
+  }
+  
+  .form-group {
+    margin-bottom: 1rem;
+  }
+  
+  label {
+    display: block;
+    font-size: 1.1rem;
+    color: #555;
+  }
+  
+  input[type="number"],
+  input[type="text"] {
+    width: 100%;
+    padding: 0.8rem;
+    margin-top: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  button.submit-btn {
+    display: inline-block;
+    width: 100%;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+  }
+  
+  button.submit-btn:hover {
+    background-color: #0056b3;
+  }
+  
+  .restore-info-section {
+    margin-top: 1rem;
+    background-color: #e9ecef;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 0.4rem;
+    border-radius: 8px;
+    text-align: center;
+    height: 50%;
+    padding-bottom: 50px;
+  }
+  .selectedBank{
+    margin-bottom: 4px;
+    /* text-align: center; */
+  }
+
+  .selectedBank span {
+    position: absolute;
+    right: 7%;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #345edb;
+
+  }
+  /* <FontAwesomeIcon icon={faCheckCircle} size="lg" color="#3498db" /> */
+  .restore-info-section h3 {
+    font-size: 1.2rem;
+    color: #333;
+  }
+  
+  .restore-info-section p {
+    font-size: 1rem;
+    color: #555;
+  }
+  
+  button.edit-btn {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+  }
+  
+  button.edit-btn:hover {
+    background-color: #218838;
+  }
+
+
+/* WithdrawalsRequestsPage.css */
+.withdrawals-page {
+  min-height: 100%;
+  background: linear-gradient(to bottom right, #e0f7fa, #ffffff);
+  padding: 30px;
+  font-family: Arial, sans-serif;
+}
+
+.page-title {
+  /* text-align: center; */
+  font-size: 30px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #0277bd;
+}
+
+.tabs {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.tab-button {
+  padding: 10px 20px;
+  border: 2px solid #0277bd;
+  background: white;
+  color: #0277bd;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 20px;
+  transition: all 0.3s;
+}
+
+.tab-button.active {
+  background: #0277bd;
+  color: white;
+}
+
+.tab-button:hover {
+  background: #0288d1;
+  color: white;
+}
+
+.cards-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.withdrawal-card {
+  background: white;
+  border-radius: 12px;
+  padding: 10px 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.justify-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.pb4 {
+  padding-bottom: 3px;
+}
+.card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-left: -15px;
+
+}
+
+.name {
+  font-weight: bold;
+  font-size: 20px;
+  color: #0277bd;
+}
+
+.amount {
+  font-weight: bold;
+  font-size: 18px;
+  color: #388e3c;
+}
+
+.bank, .account, .date {
+  font-size: 14px;
+  color: #555;
+}
+
+.card-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.approve-button, .cancel-button {
+  padding: 8px 16px;
+  border: none;
+  font-weight: bold;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.approve-button {
+  background: #4caf50;
+  color: white;
+}
+
+.approve-button:hover {
+  background: #388e3c;
+}
+
+.cancel-button {
+  background: #f44336;
+  color: white;
+}
+
+.cancel-button:hover {
+  background: #d32f2f;
+}
+
+.no-withdrawals {
+  text-align: center;
+  color: #777;
+  margin-top: 50px;
+}
+.hover-effect {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-effect:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}

@@ -1,0 +1,209 @@
+.register{
+    display: flex;
+    width: 100%;
+    height: 100%;
+    padding: 20px;
+    background-color: rgb(248, 248, 248);
+}
+.form-space{
+    flex: 1;
+    /* margin: auto; */
+    padding: 3px 35px;
+    border-radius:15px;
+    min-height: 100%;
+}
+.form-body{
+    background-color: rgba(227, 230, 232, 0.566);
+    padding: 10px 35px;
+    border-radius:15px;
+}
+.register-form label{
+    display: flex;
+    align-items: center;
+    border-radius: 20px;
+    padding: 7px 10px;
+    margin: 10px 0px;
+    background-color:   rgba(253, 254, 255, 0.984);
+}
+.register-form label:focus-within {
+    border: 1.5px solid rgb(137, 200, 239);
+    color: rgb(137, 200, 239);
+}
+.register-form label input{
+    border: none;
+    flex: 1;
+    margin: 0px 5px;
+    border-left: 1.5px solid rgb(227, 226, 226);
+    background-color:inherit;
+    font-size: 18px;
+    outline: none;
+}
+.register-form label input::placeholder{
+    color: rgb(167, 173, 173);
+    font-size: 15px;
+}
+.register-form button{
+   width: 100%;
+   border-radius: 20px;
+   padding: 6px 10px;
+   margin-top: 10px ;
+   border: none;
+   color: white ;
+   background-color: rgb(23, 127, 239);
+   font-size: 16px;
+}
+.google-icon,.form-input-icon,.arrow-icon,.google-icon-tick{
+    margin-right: 5px;
+    width: 20px;
+    border-radius: 100%;
+}
+.google-icon-tick{
+    color: rgb(254, 254, 255);
+    margin-right: 0px;
+    background-color: rgb(54, 164, 228);
+    padding: 3px 1px;
+}
+.arrow-icon:hover{
+    padding: 5px;
+    background-color: rgb(225, 249, 249);
+}
+.arrow-icon{
+    transform: rotate(-60deg);
+    width: 20px; 
+    height: 20px; 
+    padding: 7px;
+    font-size: 20px;
+    border: 1px solid;
+}
+.form-input-icon{
+    color: inherit;
+}
+.login-btn:hover{
+    background-color: black !important;
+}
+.sign-with-google:hover{
+    background-color: aliceblue;
+    color: rgb(26, 150, 244);
+}
+.sign-with-google{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+   width: 100%;
+   border-radius: 20px;
+   margin-top: 10px ;
+   padding: 4px 10px;
+   border: 1px solid ;
+   font-size: 16px;
+   color: rgb(5, 0, 0) ;
+}
+.appnanme{
+    font-size: 24px;
+    padding-top: 10px;
+}
+.form-info{
+    font-size: 12px;
+    padding-top: 10px;
+    line-height: 0.8 !important;
+}
+.app-welcome{
+    font-size: 27px;
+    padding-top: 10px;
+}
+.or div{
+    border-bottom : 1.5px solid;
+    width: 100%;
+    padding: 2px;
+    margin: 0px 5px;
+}
+.or{
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: rgb(107, 131, 150);
+}
+.already-have-account ,.dont-have-account{
+    margin-top: 20px;
+    text-align: center;
+    font-size: 16px;
+}
+.span-text:hover {
+    margin: 10px;
+}
+.span-text {
+    color: rgb(26, 190, 190);
+    font-size: 16px;
+    font-style: oblique;
+    cursor: pointer;
+}
+.dont-have-account  div {
+    font-size: 16px;
+}
+.dont-have-account  {
+    font-size: 16px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.join-with{
+    position: relative;
+    background-color: rgba(227, 230, 232, 0.566);
+    margin-top: 20px;
+    padding: 10px 35px;
+    border-radius:15px;
+    display: flex;
+}
+.join-with .pics{
+    display: flex;
+    flex-wrap: nowrap;
+}
+.join-with .arrow-space{
+    position: absolute;
+    right: 10px;
+}
+.join-with .join-t{
+    margin: 0px 10px;
+    display: flex;
+    flex-direction: column;
+}
+.join-with .join-t span{
+    font-size:small;
+}
+.join-with .join-t span:last-child{
+    font-size:14px;
+    font-size:xx-small;
+    color: rgb(134, 152, 171);
+}
+.image-space {
+    flex: 1;
+    position: -webkit-sticky;
+    position:sticky;
+    top: 10px;
+}
+.hidden{
+    display: none !important;
+}
+.relative{
+    position: relative !important;
+}
+.image-space img{
+    width: 100%;
+    height: 100%;
+    /* padding: 3px 35px; */
+    border-radius:15px;
+    object-fit:fill;
+}
+.form-errors{
+    position: fixed;
+    left:28%;
+    transform: translateX(-50%);
+    width: 34%; 
+    top: 13px;
+    background-color: rgb(237, 217, 217);
+    color: rgb(128, 7, 7);
+    justify-content: space-between;
+    border-radius: 8px;
+    padding: 5px 10px;
+    font-size: 14px;
+}

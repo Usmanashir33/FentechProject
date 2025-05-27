@@ -1,0 +1,391 @@
+:root{
+    --text-color : rgb(224, 224, 224)
+}
+
+.airtimePage{
+    width: 100%;
+    /* background-color: rgb(246, 250, 253); */
+    height: 100%;
+}
+.airtime-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 50px;
+    background-color: white;
+    padding: 7px;
+}
+.n-form{
+    display:flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1.5px solid var(--text-color);
+    padding: 6px 7px;
+    background-color: white;
+}
+input[type='number'] :focus-within{
+    inline-size: none;
+}
+
+.number-brand {
+    padding: 8px 10px;
+    flex: 1;
+    /* width: 100%; */
+    
+}
+.number-brand input {
+    outline: none;
+    border: none;
+    font-size: 18px;
+    padding-left: 10px;
+}
+.n-form-title{
+    font-size: 13px;
+    color: rgb(79, 77, 77);
+    background-color: white;
+    padding: 5px 0px ;
+
+}
+.cards-sec{
+    background-color: white;
+    border-radius: 15px;
+    padding: 5px 14px;
+}
+.t-text{
+    font-size: 15px;
+    color: rgb(107, 114, 120);
+}
+.a-cards{
+    display:flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 10px 0px;
+}
+.a-card{
+    width: 30%;
+    background-color: rgba(221, 229, 229, 0.406);
+    border-radius: 10px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+}
+.a-form span {
+    font-size: 14px;
+    font-weight: 600;
+
+}
+.a-form{
+    padding: 10px;
+    display: flex;
+    gap: 10px;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1.5px solid var(--text-color);
+    width: 100%;
+}
+
+.pay-btn:hover{
+    /* opacity: 0.6; */
+    background-color: blueviolet;
+}
+.pay-btn{
+    border-radius: 20px;
+    padding: 5px 15px;
+    margin-top: 8px;
+    border: none;
+    background-color: rgb(17, 21, 240);
+    color: white;
+    font-size: 15px;
+}
+.available-cashback div span {
+    font-size: 16px;
+}
+.available-cashback{
+    display: flex;
+    justify-content: space-between;
+    padding: 4px;
+}
+.orange{
+    color: rgb(247, 163, 7);
+}
+.bold{
+    font-weight: 800;
+}
+.a-amount{
+    font-weight: 800;
+}
+.a-amount-s{
+    font-size: small;
+}
+.cashback{
+    font-size: 14px !important;
+    color: rgb(78, 197, 4);
+    /* color: rgb(180, 21, 180); */
+}
+.airtime-services div:first-child{
+    font-size: 20px;
+    font-weight: 500;
+    color: rgb(8, 2, 41);
+}
+.airtime-services{
+    margin-bottom: 50px;
+    padding: 10px;
+    border-radius: 15px ;
+    /* background-color: rgba(228, 238, 249, 0.292); */
+}
+.a-dropdow{
+    left: 1px;
+    background-color: white;
+    min-width: 360px;
+    right: 0px;
+    top: 0px;
+    z-index: 999999;
+    border-radius: 10px;
+    padding: 0px 10px;
+    box-shadow: 0px 0px 2px 1000px   rgba(182, 207, 244, 0.429) !important;
+}
+.b-selected-image{
+    width: 15px;
+    border-radius: 3px;
+    height: 15px;
+}
+.selected-brand-sec{
+    color: rgb(2, 62, 62);
+    /* background-color: rgba(111, 210, 249, 0.372); */
+    padding: 2px 4px ;
+    border-radius: 2px;
+    gap: 5px;
+    align-items: center;
+}
+
+.coins-icon{
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+.coins-icon img{
+    width: 25px;
+}
+.custom-amount{
+    /* width: 500px; */
+    background-color: rgba(206, 235, 245, 0.263);
+    color: rgb(0, 5, 9);
+    font-size: 20px;
+    border-radius:5px;
+    flex: 1;
+    margin-left: 10px;
+    outline: none;
+    padding: 5px !important;
+}
+.confirm-payment-plate .cancel-icon{
+    position: absolute;
+    right: 20px;
+    top: 10px;
+}
+.confirm-payment-plate{
+    border-radius: 20px 20px  0px 0px;
+    box-shadow: 0px 0px 1px 2px  rgba(205, 201, 201, 0.557);
+    position: absolute;
+    position: sticky;
+    background-color: rgb(232, 239, 241);
+    padding: 10px;
+    z-index: 999999;
+    bottom: 0;
+    width: 100%;
+}
+.c-text{
+    text-align: center;
+    font-weight: 500;
+    font-size: 18px;
+}
+.c-amount{
+    color:  rgb(19, 19, 202);
+    text-align: center;
+    font-weight: 600;
+    font-size: 22px;
+    padding-bottom: 10px;
+
+}
+.gap-10{
+    gap: 4px;
+    align-items: center;
+}
+.b-card ,.user-points,.num-divs{
+    background-color:white;
+    border-radius: 10px;
+    padding: 5px 10px;
+}
+.b-card div span {
+    font-size: 16px;
+    color: rgb(21, 20, 20);
+}
+.b-card div {
+    justify-content: space-between;
+    align-items: center;
+    padding: 2px;
+}
+.user-points{
+    justify-content: space-between;
+    margin: 10px 0px;
+}
+.user-points span ,.user-points div span {
+    font-size: 16px;
+    color: rgb(21, 20, 20);
+}
+.see-all-font{
+    font-size: 16px;
+    color: rgb(21, 20, 20);
+}
+.payment-method{
+    justify-content: space-between;
+    padding-bottom: 8px;
+}
+.confirm-pay-btn:hover{
+   color: aliceblue;
+   background-color: black;
+}
+.confirm-pay-btn{
+    width: 100%;
+    border-radius: 8px;
+    border: none;
+    background-color: rgb(19, 19, 202);
+    color: white;
+    padding: 4px;
+    margin-bottom: 10px;
+}
+.select-account span ,.tick-icon{
+    font-size: 15px;
+    color: rgb(21, 20, 20);
+}
+.tick-icon{
+
+}
+.select-account{
+    justify-content: space-between;
+    background-color:white;
+    border-radius: 10px;
+    padding:  10px;
+    margin: 10px 0px;
+}
+.num-divs{
+    /* max-width: 400px; */
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-around;
+    gap: 15px;
+    /* border: 1px solid ; */
+    padding: 10px;
+
+}
+.num-divs div:hover{
+    border: 1.5px solid rgb(130, 193, 232);
+    background-color: rgba(168, 211, 249, 0.16);
+}
+.num-divs div{
+    background-color: rgba(168, 211, 249, 0.342);
+    border-radius: 10px;
+    padding: 10px;
+    width: 30%;
+    /* max-width: 30%; */
+    text-align: center;
+    font-size: 25px;
+    color:rgb(2, 15, 26);
+}
+.show-pin {
+    /* gap: 10px; */
+    flex-wrap: wrap;
+}
+.show-pin input {
+    width: 50px;
+    max-width: 10%;
+    border: 1.5px solid rgb(147, 157, 163);
+    border-radius: 5px;
+    font-size: 15px;
+    padding: 8px;
+    text-align: center;
+    outline: none;
+}
+.services-provider-items div img:hover{
+    background: rgb(105, 190, 243) !important;
+    padding: 2px;
+}
+.services-provider-items div img{
+    width: 100px;
+    height: 100px;
+    border-radius: 10px;
+}
+.services-provider-items div{
+    display: flex;
+    justify-content:space-around;
+}
+.services-provider-items{
+    padding-top: 10px;
+    display: flex;
+    gap: 10px;
+    flex-direction:column ;
+}
+.transection-status-page .hdr img{
+    width: 120px;
+    min-height: 80px;
+    border-radius: 100%;
+}
+.transection-status-page .hdr{
+    margin-bottom: 10px;
+    text-align: center;
+    font-size: 18px;
+    font-weight:500;
+}
+.transection-status-page{
+    border: 1.5px solid rgb(232, 237, 237);
+    border-radius: 15px;
+    font-size: 14px;
+    color: rgba(17, 57, 49, 0.916);
+    position: absolute;
+    top: 0px;
+    width: 100%;
+    background-color: rgb(247, 253, 254);
+    height: 100%;
+    z-index: 99999;
+    padding: 25px;
+}
+.transecion-details div{
+    margin: 5px 0px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.transecion-details{
+    border-radius: 10px;
+    background-color: rgba(184, 193, 230, 0.256);
+    padding: 15px;
+    
+}
+.status-success{
+    padding: 4px;
+    color: rgb(2, 164, 21);
+}
+.status-pending{
+    padding: 4px;
+    color: rgb(226, 141, 13);
+}
+.status-failed{
+    padding: 4px;
+    color: rgb(188, 3, 3);
+}
+.payment-status-icon{
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    font-size: 22px;
+    color: rgba(234, 58, 58, 0.621);
+}
+.copy-icon:hover{
+    opacity: 0.5;
+}
+.copy-icon{
+    margin-left: 10px;
+    color: rgb(138, 118, 249);
+}

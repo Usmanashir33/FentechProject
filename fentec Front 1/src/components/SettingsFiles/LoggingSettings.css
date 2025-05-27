@@ -1,0 +1,95 @@
+/* Container Styles */
+.password-change-container {
+    height: 100%;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.046);
+    background: #f9f9f9;
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
+
+/* Title */
+.password-change-container h2 {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+/* Form Styles */
+.password-change-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.form-group {
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 14px;
+    color: #555;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    outline: none;
+    transition: border 0.2s;
+}
+
+.form-group input:focus {
+    border-color: #007bff;
+}
+
+/* Button Styles */
+.submit-button {
+    background-color: #007bff;
+    color: white;
+    font-size: 16px;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.submit-button:hover {
+    background-color: #0056b3;
+}
+
+/* Error Message */
+.error-message {
+    color: red;
+    font-size: 14px;
+    margin-top: -10px;
+}
+
+/* Success Message */
+.success-message {
+    color: green;
+    font-size: 14px;
+    margin-top: -10px;
+}
+.active-btn{
+    padding-bottom: 4px;
+    background-color: #007bffc0 !important;
+    color: white !important;
+    font-size: 16px;
+    border-bottom: 2px solid rgba(0, 0, 255, 0.199)!important;
+}
+.pp-icon{
+    position: absolute;
+    right: 5px;
+    top: 55%;
+    color: #007bff;
+}
+.less-index{
+    z-index: 99;
+}

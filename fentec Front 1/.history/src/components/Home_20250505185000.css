@@ -1,0 +1,170 @@
+  /* Container */
+  .home-container {
+    /* padding: 0.5rem; */
+    margin: 0 auto;
+  }
+  
+  /* Header */
+  .home-header {
+    margin-bottom: 0.5rem;
+    padding: 5px !important;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .user-pic-home{
+    width: 50px;
+    height: 50px;
+    border-radius: 5px;
+    margin-right: 14px;
+
+  }
+  .user-fullname {
+    font-size: 1rem;
+    font-weight: bold;
+    color: #ffffff;
+  }
+  .user-name {
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: #dbdbdb;
+  }
+  
+  /* User Info Card */
+  .user-info-card {
+    background-color: #007bff;
+    color: white;
+    border-radius: 10px;
+    padding: 0.5rem;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 0.4rem 0px ;
+  }
+  
+  .info-item {
+    margin-bottom: 10px;
+  }
+  
+  .info-item p {
+    font-size: 0.9rem;
+    color: #fdf501;
+    margin: 0;
+  }
+  
+  .info-item h3,
+  .info-item span {
+    font-size: 1rem;
+    font-weight: bold;
+    display: inline-block;
+    margin-right: 0.5rem;
+  }
+  
+  .copy-icon {
+    color: #e8ebef;
+    cursor: pointer;
+  }
+  
+  .copy-icon:hover {
+    color: #01100a;
+  }
+  
+  /* Transaction Buttons */
+  .transaction-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    max-width: 100%;
+    overflow: hidden;
+  }
+  
+  .button-home {
+    border: none;
+    padding: 0.8rem 1.2rem;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    width: 44%;
+    transition: transform 0.2s ease;
+  }
+  
+  button:hover {
+    transform: scale(1.05);
+  }
+  
+  .deposit-btn {
+    background-color: #28a745;
+    color: white;
+  }
+  
+  .withdraw-btn {
+    background-color: #dc3545;
+    color: white;
+  }
+  
+  /* Services Section */
+  .services-section {
+    border-radius: 10px;
+    padding: 5px;
+    text-align: center;
+    background: linear-gradient(to bottom, #f0f8ff, #e6f7ff93);
+
+  }
+  
+  .services {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+  }
+  
+  .service-item:hover {
+    opacity: 0.7;
+  }
+  .service-item {
+    text-align: center;
+    margin:0.3rem 0.5rem;
+  }
+  
+  .service-icon {
+    font-size: 1.6rem;
+    color: #007bff;
+    /* margin-bottom: 0.1rem; */
+  }
+  .bankname{
+    display: flex;
+    justify-content: space-between;
+    margin-right: 25px;
+  }
+  .service-item p {
+    font-size: 0.9rem;
+    color: #555;
+  }
+
+  .menu-btn-home{
+    font-size: 27px !important;
+  }
+
+  /* Popup */
+  .popup { 
+    position: fixed;
+    bottom:700px;
+    /* top: -70px; */
+    left: 50%;
+    transform: translateX(-50%);
+    background: #007bff;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    animation: fadeInOut 2s ease;
+  }
+  
+  @keyframes fadeInOut {
+    0%, 80% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+  

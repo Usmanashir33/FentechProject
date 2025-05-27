@@ -1,0 +1,137 @@
+/* Add a sleek hover effect on the card */
+.transection-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+}
+
+.transection-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Add a smooth color transition to the status */
+.t-status{
+    transition: background-color 0.3s ease;
+    font-size: 16px;
+    font-weight: bold!important;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    border-radius: 20px;
+    padding:2px 5px ;
+    width: fit-content;
+    overflow-x: hidden;
+}
+
+.action-icon{
+    font-size: 37px;
+}
+
+
+.t-pending {
+    color: rgb(148, 103, 6);
+    
+}
+.t-completed{
+    color: rgba(30, 36, 189, 0.792) !important;
+    background-color: rgb(215, 243, 232);
+}
+.t-failed{
+    color: rgba(210, 37, 14, 0.792);
+    background-color: antiquewhite;
+}
+
+.t-out{
+    margin-bottom: 2px;
+    margin-left: 2px;
+    color: rgba(210, 37, 14, 0.792) !important;
+}
+
+.t-in{
+    margin-bottom: 2px;
+    margin-left: 2px;
+    /* background-color: #c5dafa64 ; */
+    /* color: rgba(30, 36, 189, 0.792) !important; */
+    color: rgb(5, 150, 34);
+
+}
+.t-in .transection-col1 .t-details span{
+    color: rgba(30, 36, 189, 0.792);
+}
+/* Add hover effect on icons */
+.v-icon:hover {
+    color: #4b1130f4;
+    transform: scale(1.1);
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+
+/* Dropdown animations */
+.t-dropdown {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-20px);
+    transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+}
+
+.t-dropdown.hidden {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-20px);
+}
+
+.t-dropdown:not(.hidden) {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+
+.d-nav:hover {
+    background-color: #f3f3f3;
+    cursor: pointer;
+}
+
+/* Styling for the status text */
+.t-amount {
+    text-align: center;
+    font-size: 0.9rem;
+    font-weight: bold;
+    width: 17%;
+    word-break: break-all;
+}
+
+
+/* Adding some extra spacing and clean up */
+.transection-col1 {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.t-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.t-name {
+    font-size: 1.1rem;
+    font-weight:bold;
+    color: rgb(38, 80, 170);
+}
+
+.transection-type{
+    font-size: 0.9rem;
+    color:rgb(38, 80, 170);
+}
+.t-date{
+    padding-top: 4px;
+    font-size: 12px !important;
+    color: rgba(52, 53, 54, 0.845) !important;
+    /* font-family: monospace; */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+
+
+

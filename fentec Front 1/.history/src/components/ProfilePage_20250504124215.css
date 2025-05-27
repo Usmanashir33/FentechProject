@@ -1,0 +1,122 @@
+/* Profile Page Styles */
+
+.profile-container {
+  margin: 0 auto;
+  position: relative;
+}
+
+.profile-header {
+  border: 1px solid ;
+  text-align: center;
+  margin-bottom: 20px;
+  position: s;
+}
+
+.user-icon {
+  font-size: 80px;
+  color: #4caf50;
+  margin-bottom: 10px;
+}
+
+.profile-header h1 {
+  font-size: 24px;
+  margin: 5px 0;
+}
+
+.profile-header p {
+  color: #555;
+  font-size: 14px;
+  margin: 2px 0;
+}
+
+.card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+.card h2 {
+  font-size: 18px;
+  margin-bottom: 10px;
+  color: #4caf50;
+}
+
+.account-info p,
+.edit-profile p {
+  margin: 8px 0;
+  font-size: 14px;
+  color: #555;
+}
+
+.kyc-complete,
+.kyc-pending {
+  display: flex;
+  align-items: center;
+}
+
+.status-icon {
+  font-size: 20px;
+  margin-right: 8px;
+}
+
+.success {
+  color: #4caf50;
+}
+
+.error {
+  color: #f44336;
+}
+
+.kyc-form h3 {
+  font-size: 16px;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.kyc-form label {
+  display: block;
+  margin: 10px 0;
+  font-size: 14px;
+  color: #555;
+}
+
+.kyc-form input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.submit-btn {
+  background: #4caf50;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.submit-btn:hover {
+  background: #45a049;
+}
+
+.edit-btn,
+.save-btn {
+  background: #2196f3;
+  color: white;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+.edit-btn:hover,
+.save-btn:hover {
+  background: #1976d2;
+}

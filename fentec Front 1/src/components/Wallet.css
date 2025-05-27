@@ -1,0 +1,154 @@
+/* General Styles */
+
+.user-spending {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Balance Card */
+.balance-card {
+    background: linear-gradient(to right, #70cbffb5, #5bc25e2d);
+
+    color: #333;
+    border-radius: 16px;
+    box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.1);
+    padding: 20px 30px;
+}
+
+.balance-names {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    align-items: center;
+}
+
+.b-name {
+    font-weight: 600;
+    font-size: 18px;
+    color: rgb(28, 59, 2) !important;
+}
+
+.b-chart {
+    color: #00bcd4;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.card-footer {
+    display: flex;
+    justify-content: space-between;
+    font-size: 20px;
+    font-weight: 500;
+    color: #555;
+}
+
+.card-footer span {
+    color: #00bcd4 !important;
+    font-weight: bold;
+}
+
+/* Inflow and Outflow Cards */
+.inflow-outflow-container {
+    display: flex;
+    gap: 20px;
+}
+
+.inflow-card, .outflow-card {
+    flex: 1;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.1);
+    padding: 20px 30px;
+}
+
+.outflow-card {
+    margin-right: 0;
+    background: linear-gradient(to right, #f1130341, #0e060615);
+
+}
+.inflow-card{
+    background: linear-gradient(to right, #5bc25e2d, #6ca13028);
+
+}
+
+.account-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    align-items: center;
+}
+
+.account-info .balance {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+}
+
+.payment-buttons {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.deposite-btn, .withdraw-btn {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+    cursor: pointer;
+    background: linear-gradient(to right, #4caf50, #8bc34a);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.withdraw-btn {
+    background: linear-gradient(to right, #f44336, #e57373);
+}
+
+.deposite-btn:hover, .withdraw-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Services Section */
+.sec3 {
+    margin-top: 20px;
+    padding: 20px;
+    background: #ffffff23;
+    border-radius: 16px;
+    box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+.services-items {
+    display: flex;
+    /* grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); */
+    /* gap: 10px; */
+    justify-items: center;
+}
+
+.t-imag {
+    width: 80px;
+    height: 80px;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 10px !important;
+    background-color: #e7f1e8d5;
+    padding: 2px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.281);
+}
+
+.t-imag:hover {
+    transform: scale(1.1);
+    box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Misc */
+hr {
+    border: none;
+    height: 1px;
+    background: #ddd;
+    margin: 20px 0;
+}
