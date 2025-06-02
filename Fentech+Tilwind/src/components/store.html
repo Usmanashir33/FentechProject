@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Digital Wallet Dashboard</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: { primary: "#6c5ce7", secondary: "#a29bfe" },
+            borderRadius: {
+              none: "0px",
+              sm: "4px",
+              DEFAULT: "8px",
+              md: "12px",
+              lg: "16px",
+              xl: "20px",
+              "2xl": "24px",
+              "3xl": "32px",
+              full: "9999px",
+              button: "8px",
+            },
+          },
+        },
+      };
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css"
+    />
+    <style>
+      :where([class^="ri-"])::before { content: "\f3c2"; }
+      body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f9fafb;
+      }
+      .fade-in {
+      opacity: 1 !important;
+      }
+      .slide-in {
+      transform: translate(-50%, -50%) !important;
+      opacity: 1 !important;
+      }
+      .modal-container {
+      transform: translate(-50%, -60%);
+      opacity: 0;
+      transition: all 0.3s ease-in-out;
+      }
+      .card-animate {
+      transition: all 0.3s ease-in-out;
+      }
+      .card-animate:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+      }
+      .gradient-header {
+      background: linear-gradient(135deg, #6c5ce7 0%, #8e7cef 100%);
+      }
+      .card-shadow {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      }
+      .input-field:focus {
+      border-color: #6c5ce7;
+      box-shadow: 0 0 0 2px rgba(108, 92, 231, 0.1);
+      }
+      input[type="number"]::-webkit-inner-spin-button,
+      input[type="number"]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+      }
+      .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 48px;
+      height: 24px;
+      }
+      .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+      }
+      .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #e2e8f0;
+      transition: .4s;
+      border-radius: 24px;
+      }
+      .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+      }
+      input:checked + .toggle-slider {
+      background-color: #6c5ce7;
+      }
+      input:checked + .toggle-slider:before {
+      transform: translateX(24px);
+      }
+    </style>
+  </head>
+  <body class="min-h-screen">
+    <div class="max-w-md mx-auto bg-white min-h-screen shadow-lg">
+      <!-- Header Section -->
+      <div
+        class="gradient-header px-6 pt-8 pb-4 rounded-b-xl relative overflow-hidden"
+      >
+        <div class="absolute inset-0">
+          <img
+            src="https://readdy.ai/api/search-image?query=abstract%20modern%20gradient%20background%20with%20soft%20waves%20and%20curves%2C%20professional%20business%20style%2C%20subtle%20pattern%2C%20light%20and%20airy%2C%20clean%20design%2C%20high%20quality%20digital%20art&width=800&height=400&seq=1&orientation=landscape"
+            class="w-full h-full object-cover opacity-20"
+          />
+        </div>
+        <div class="relative flex items-center mb-4">
+          <button id="profileEditBtn" class="relative group card-animate">
+            <div
+              class="w-12 h-12 rounded-full bg-white overflow-hidden flex items-center justify-center shadow-lg"
+            >
+              <img
+                src="https://readdy.ai/api/search-image?query=professional%20headshot%20of%20a%20middle-aged%20man%20with%20glasses%2C%20business%20casual%20attire%2C%20neutral%20expression%2C%20high%20quality%20portrait%2C%20professional%20lighting%2C%20clean%20background%2C%20realistic&width=100&height=100&seq=1&orientation=squarish"
+                alt="Profile"
+                class="w-full h-full object-cover"
+              />
+              <div
+                class="absolute inset-0 bg-black bg-opacity-40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
+              >
+                <i class="ri-camera-line text-white"></i>
+              </div>
+            </div>
+          </button>
+          <div class="ml-3">
+            <h2 class="text-white font-semibold">John Anderson</h2>
+            <p class="text-white text-opacity-80 text-sm">Premium Account</p>
+          </div>
+        </div>
+        <p class="text-white text-opacity-90 text-lg">Good afternoon</p>
+      </div>
+      <!-- Balance Card -->
+      <div class="px-6 -mt-4">
+        <div class="bg-white rounded-xl p-5 card-shadow card-animate">
+          <div class="flex justify-between items-center mb-2">
+            <p class="text-gray-600">Available Balance</p>
+            <div class="w-6 h-6 flex items-center justify-center text-gray-500">
+              <i class="ri-eye-line"></i>
+            </div>
+          </div>
+          <h1 class="text-3xl font-bold text-gray-800 mb-4">$ 12,345.67</h1>
+          <div class="grid grid-cols-2 gap-3">
+            <button
+              class="bg-primary text-white py-2.5 px-4 rounded-button flex items-center justify-center whitespace-nowrap"
+            >
+              <i class="ri-add-line mr-2"></i>
+              Fund Wallet
+            </button>
+            <button
+              class="bg-primary text-white py-2.5 px-4 rounded-button flex items-center justify-center whitespace-nowrap"
+            >
+              <i class="ri-arrow-right-line mr-2"></i>
+              Withdraw
+            </button>
+          </div>
+        </div>
+      </div>
+      <!-- Banking Information -->
+      <div class="px-6 mt-5">
+        <div class="bg-white rounded-xl p-5 card-shadow card-animate">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-semibold text-gray-800">Bank Accounts</h3>
+            <button
+              id="addBankBtn"
+              class="text-primary hover:text-primary/80 transition-colors"
+            >
+              <i class="ri-add-circle-line text-xl"></i>
+            </button>
+          </div>
+          <div class="mb-5">
+            <div class="flex justify-between items-center mb-1">
+              <label class="text-sm text-gray-500">Bank Name</label>
+              <button
+                class="w-6 h-6 flex items-center justify-center text-gray-500"
+              >
+                <i class="ri-pencil-line"></i>
+              </button>
+            </div>
+            <p class="text-gray-800 font-medium">Chase Bank</p>
+          </div>
+          <div class="mb-5">
+            <div class="flex justify-between items-center mb-1">
+              <label class="text-sm text-gray-500">Account Number</label>
+              <button
+                class="w-6 h-6 flex items-center justify-center text-gray-500"
+              >
+                <i class="ri-pencil-line"></i>
+              </button>
+            </div>
+            <p class="text-gray-800 font-medium">****4567</p>
+          </div>
+          <div class="flex justify-between items-center">
+            <div>
+              <label class="text-sm text-gray-500 block mb-1">KYC Status</label>
+              <div class="flex items-center">
+                <div
+                  class="w-5 h-5 flex items-center justify-center text-green-500 mr-1"
+                >
+                  <i class="ri-check-line"></i>
+                </div>
+                <span class="text-gray-800 font-medium">Verified</span>
+              </div>
+            </div>
+            <button class="text-primary flex items-center">
+              <i class="ri-file-list-3-line mr-1"></i>
+              <span>Update KYC</span>
+            </button>
+          </div>
+        </div>
+      </div>
+      <!-- Add New Bank Account Form -->
+      <div class="px-6 mt-5">
+        <div class="bg-white rounded-xl p-5 card-shadow card-animate">
+          <h3 class="text-lg font-semibold text-gray-800 mb-4">
+            Add New Bank Account
+          </h3>
+          <form id="bankAccountForm">
+            <div class="mb-4">
+              <label for="bankName" class="block text-sm text-gray-600 mb-1"
+                >Bank Name</label
+              >
+              <div class="relative">
+                <input
+                  type="text"
+                  id="bankName"
+                  class="w-full pl-4 pr-10 py-2.5 border border-gray-300 rounded-lg focus:outline-none input-field"
+                  placeholder="Select your bank"
+                  readonly
+                />
+                <button
+                  type="button"
+                  id="bankDropdownBtn"
+                  class="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 flex items-center justify-center text-gray-500"
+                >
+                  <i class="ri-arrow-down-s-line"></i>
+                </button>
+                <div
+                  id="bankDropdown"
+                  class="absolute left-0 right-0 top-full mt-1 bg-white rounded-lg shadow-lg border border-gray-100 hidden z-10 max-h-60 overflow-y-auto"
+                >
+                  <div class="p-2 space-y-1">
+                    <button
+                      type="button"
+                      class="w-full text-left px-3 py-2 rounded hover:bg-gray-50 text-gray-700 text-sm transition-colors"
+                    >
+                      Access Bank
+                    </button>
+                    <button
+                      type="button"
+                      class="w-full text-left px-3 py-2 rounded hover:bg-gray-50 text-gray-700 text-sm transition-colors"
+                    >
+                      Zenith Bank
+                    </button>
+                    <button
+                      type="button"
+                      class="w-full text-left px-3 py-2 rounded hover:bg-gray-50 text-gray-700 text-sm transition-colors"
+                    >
+                      First Bank
+                    </button>
+                    <button
+                      type="button"
+                      class="w-full text-left px-3 py-2 rounded hover:bg-gray-50 text-gray-700 text-sm transition-colors"
+                    >
+                      GTBank
+                    </button>
+                    <button
+                      type="button"
+                      class="w-full text-left px-3 py-2 rounded hover:bg-gray-50 text-gray-700 text-sm transition-colors"
+                    >
+                      UBA
+                    </button>
+                    <button
+                      type="button"
+                      class="w-full text-left px-3 py-2 rounded hover:bg-gray-50 text-gray-700 text-sm transition-colors"
+                    >
+                      Union Bank
+                    </button>
+                    <button
+                      type="button"
+                      class="w-full text-left px-3 py-2 rounded hover:bg-gray-50 text-gray-700 text-sm transition-colors"
+                    >
+                      Fidelity Bank
+                    </button>
+                    <button
+                      type="button"
+                      class="w-full text-left px-3 py-2 rounded hover:bg-gray-50 text-gray-700 text-sm transition-colors"
+                    >
+                      Ecobank
+                    </button>
+                    <button
+                      type="button"
+                      class="w-full text-left px-3 py-2 rounded hover:bg-gray-50 text-gray-700 text-sm transition-colors"
+                    >
+                      FCMB
+                    </button>
+                    <button
+                      type="button"
+                      class="w-full text-left px-3 py-2 rounded hover:bg-gray-50 text-gray-700 text-sm transition-colors"
+                    >
+                      Sterling Bank
+                    </button>
+                    <button
+                      type="button"
+                      class="w-full text-left px-3 py-2 rounded hover:bg-gray-50 text-gray-700 text-sm transition-colors"
+                    >
+                      Stanbic IBTC
+                    </button>
+                    <button
+                      type="button"
+                      class="w-full text-left px-3 py-2 rounded hover:bg-gray-50 text-gray-700 text-sm transition-colors"
+                    >
+                      Wema Bank
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="mb-4">
+              <label for="accountName" class="block text-sm text-gray-600 mb-1"
+                >Account Holder Name</label
+              >
+              <div class="relative">
+                <input
+                  type="text"
+                  id="accountName"
+                  class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none input-field"
+                  placeholder="Enter account holder name"
+                />
+              </div>
+            </div>
+            <div class="mb-4">
+              <label
+                for="accountNumber"
+                class="block text-sm text-gray-600 mb-1"
+                >Account Number</label
+              >
+              <div class="relative">
+                <input
+                  type="text"
+                  id="accountNumber"
+                  class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none input-field"
+                  placeholder="Enter account number"
+                />
+              </div>
+            </div>
+            <div class="mb-4">
+              <label
+                for="routingNumber"
+                class="block text-sm text-gray-600 mb-1"
+                >Routing Number</label
+              >
+              <div class="relative">
+                <input
+                  type="text"
+                  id="routingNumber"
+                  class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none input-field"
+                  placeholder="Enter routing number"
+                />
+              </div>
+            </div>
+            <div class="mb-5">
+              <label class="flex items-center">
+                <div class="mr-2 relative">
+                  <input
+                    type="checkbox"
+                    id="defaultAccount"
+                    class="opacity-0 absolute h-5 w-5"
+                  />
+                  <div
+                    class="w-5 h-5 border border-gray-300 rounded flex items-center justify-center bg-white"
+                  >
+                    <svg
+                      class="w-3 h-3 text-primary hidden"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path d="M0 11l2-2 5 5L18 3l2 2L7 18z" />
+                    </svg>
+                  </div>
+                </div>
+                <span class="text-sm text-gray-700"
+                  >Set as default account</span
+                >
+              </label>
+            </div>
+            <button
+              type="submit"
+              class="w-full bg-primary text-white py-2.5 px-4 rounded-button flex items-center justify-center whitespace-nowrap"
+            >
+              <i class="ri-add-line mr-2"></i>
+              Add Bank Account
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Transaction Form -->
+      <div class="px-6 mt-5">
+        <div class="bg-white rounded-xl p-5 card-shadow card-animate">
+          <h3 class="text-lg font-semibold text-gray-800 mb-4">
+            Make a Transaction
+          </h3>
+          <form id="transactionForm">
+            <div class="mb-4">
+              <label
+                for="transactionType"
+                class="block text-sm text-gray-600 mb-1"
+                >Transaction Type</label
+              >
+              <div class="relative">
+                <div
+                  class="flex rounded-lg overflow-hidden border border-gray-300"
+                >
+                  <button
+                    type="button"
+                    class="flex-1 py-2.5 bg-primary text-white text-center"
+                    id="sendBtn"
+                  >
+                    Send
+                  </button>
+                  <button
+                    type="button"
+                    class="flex-1 py-2.5 bg-white text-gray-700 text-center"
+                    id="requestBtn"
+                  >
+                    Request
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="mb-4">
+              <label for="recipient" class="block text-sm text-gray-600 mb-1"
+                >Recipient</label
+              >
+              <div class="relative">
+                <input
+                  type="text"
+                  id="recipient"
+                  class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none input-field"
+                  placeholder="Email or username"
+                />
+                <button
+                  id="recipientSearchBtn"
+                  class="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 flex items-center justify-center text-gray-500 hover:text-primary transition-colors"
+                >
+                  <i class="ri-user-search-line"></i>
+                </button>
+              </div>
+            </div>
+            <div class="mb-4">
+              <label for="amount" class="block text-sm text-gray-600 mb-1"
+                >Amount</label
+              >
+              <div class="relative">
+                <div
+                  class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+                >
+                  $
+                </div>
+                <input
+                  type="number"
+                  id="amount"
+                  class="w-full pl-8 pr-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none input-field"
+                  placeholder="0.00"
+                />
+              </div>
+            </div>
+            <div class="mb-5">
+              <label for="note" class="block text-sm text-gray-600 mb-1"
+                >Note (Optional)</label
+              >
+              <div class="relative">
+                <textarea
+                  id="note"
+                  rows="2"
+                  class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none input-field"
+                  placeholder="Add a note"
+                ></textarea>
+              </div>
+            </div>
+            <button
+              type="submit"
+              class="w-full bg-primary text-white py-2.5 px-4 rounded-button flex items-center justify-center whitespace-nowrap"
+            >
+              <i class="ri-send-plane-line mr-2"></i>
+              Send Money
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="grid grid-cols-2 gap-4 px-6 mt-5 mb-8">
+        <div
+          class="bg-white p-4 rounded-xl card-shadow flex flex-col items-center"
+        >
+          <div
+            class="w-10 h-10 flex items-center justify-center text-primary mb-2"
+          >
+            <i class="ri-time-line ri-lg"></i>
+          </div>
+          <p class="text-gray-800 text-sm text-center">Transaction History</p>
+        </div>
+        <div
+          class="bg-white p-4 rounded-xl card-shadow flex flex-col items-center"
+        >
+          <div
+            class="w-10 h-10 flex items-center justify-center text-primary mb-2"
+          >
+            <i class="ri-settings-line ri-lg"></i>
+          </div>
+          <p class="text-gray-800 text-sm text-center">Settings</p>
+        </div>
+        <div
+          class="bg-white p-4 rounded-xl card-shadow flex flex-col items-center"
+        >
+          <div
+            class="w-10 h-10 flex items-center justify-center text-primary mb-2"
+          >
+            <i class="ri-key-line ri-lg"></i>
+          </div>
+          <p class="text-gray-800 text-sm text-center">Change PIN</p>
+        </div>
+        <div
+          class="bg-white p-4 rounded-xl card-shadow flex flex-col items-center"
+        >
+          <div
+            class="w-10 h-10 flex items-center justify-center text-primary mb-2"
+          >
+            <i class="ri-logout-box-line ri-lg"></i>
+          </div>
+          <p class="text-gray-800 text-sm text-center">Logout</p>
+        </div>
+      </div>
+    </div>
+    
+    <script id="checkboxScript">
+      document.addEventListener("DOMContentLoaded", function () {
+        const checkbox = document.getElementById("defaultAccount");
+        const checkmark = checkbox.nextElementSibling.querySelector("svg");
+        checkbox.addEventListener("change", function () {
+          if (this.checked) {
+            checkmark.classList.remove("hidden");
+          } else {
+            checkmark.classList.add("hidden");
+          }
+        });
+      });
+    </script>
+    <script id="transactionTypeScript">
+      document.addEventListener("DOMContentLoaded", function () {
+        const sendBtn = document.getElementById("sendBtn");
+        const requestBtn = document.getElementById("requestBtn");
+        const submitBtn = document.querySelector(
+          '#transactionForm button[type="submit"]',
+        );
+        sendBtn.addEventListener("click", function () {
+          sendBtn.classList.remove("bg-white", "text-gray-700");
+          sendBtn.classList.add("bg-primary", "text-white");
+          requestBtn.classList.remove("bg-primary", "text-white");
+          requestBtn.classList.add("bg-white", "text-gray-700");
+          submitBtn.innerHTML = '<i class="ri-send-plane-line mr-2"></i> Send Money';
+        });
+        requestBtn.addEventListener("click", function () {
+          requestBtn.classList.remove("bg-white", "text-gray-700");
+          requestBtn.classList.add("bg-primary", "text-white");
+          sendBtn.classList.remove("bg-primary", "text-white");
+          sendBtn.classList.add("bg-white", "text-gray-700");
+          submitBtn.innerHTML = '<i class="ri-funds-line mr-2"></i> Request Money';
+        });
+      });
+    </script>
+    <script id="formValidationScript">
+      document.addEventListener("DOMContentLoaded", function () {
+        const bankAccountForm = document.getElementById("bankAccountForm");
+        const transactionForm = document.getElementById("transactionForm");
+        bankAccountForm.addEventListener("submit", function (e) {
+          e.preventDefault();
+          // Form validation and submission logic
+          alert("Bank account added successfully!");
+          bankAccountForm.reset();
+        });
+        transactionForm.addEventListener("submit", function (e) {
+          e.preventDefault();
+          // Form validation and submission logic
+          const isSend = document
+            .getElementById("sendBtn")
+            .classList.contains("bg-primary");
+          const action = isSend ? "sent" : "requested";
+          alert(`Money ${action} successfully!`);
+          transactionForm.reset();
+        });
+      });
+    </script>
+    <!-- Modal Backdrop -->
+    <div
+      id="modalBackdrop"
+      class="fixed inset-0 bg-white/80 backdrop-blur-sm hidden z-40 transition-opacity duration-300 ease-in-out opacity-0"
+    ></div>
+    <!-- Profile Edit Modal -->
+    <div
+      id="profileEditModal"
+      class="modal-container fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white/90 backdrop-blur-sm rounded-xl p-6 w-[90%] max-w-md hidden z-50 card-shadow"
+    >
+      <div class="flex justify-between items-center mb-6">
+        <h3 class="text-xl font-semibold text-gray-800">Edit Profile</h3>
+        <button class="modal-close text-gray-500 hover:text-gray-700">
+          <i class="ri-close-line text-xl"></i>
+        </button>
+      </div>
+      <form id="profileEditForm" class="space-y-4">
+        <div class="flex justify-center mb-6">
+          <div class="relative">
+            <div class="w-24 h-24 rounded-full overflow-hidden">
+              <img
+                id="profilePreview"
+                src="https://readdy.ai/api/search-image?query=professional%20headshot%20of%20a%20middle-aged%20man%20with%20glasses%2C%20business%20casual%20attire%2C%20neutral%20expression%2C%20high%20quality%20portrait%2C%20professional%20lighting%2C%20clean%20background%2C%20realistic&width=200&height=200&seq=1&orientation=squarish"
+                alt="Profile"
+                class="w-full h-full object-cover"
+              />
+            </div>
+            <label
+              for="profileImage"
+              class="absolute bottom-0 right-0 w-8 h-8 bg-primary rounded-full flex items-center justify-center cursor-pointer"
+            >
+              <i class="ri-camera-line text-white"></i>
+              <input
+                type="file"
+                id="profileImage"
+                class="hidden"
+                accept="image/*"
+              />
+            </label>
+          </div>
+        </div>
+        <div>
+          <label for="fullName" class="block text-sm text-gray-600 mb-1"
+            >Full Name</label
+          >
+          <input
+            type="text"
+            id="fullName"
+            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none input-field"
+            value="John Anderson"
+          />
+        </div>
+        <div>
+          <label for="username" class="block text-sm text-gray-600 mb-1"
+            >Username</label
+          >
+          <input
+            type="text"
+            id="username"
+            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none input-field"
+            value="@johnanderson"
+          />
+        </div>
+        <div>
+          <label for="phone" class="block text-sm text-gray-600 mb-1"
+            >Phone Number</label
+          >
+          <input
+            type="tel"
+            id="phone"
+            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none input-field"
+            value="+1 234 567 8900"
+          />
+        </div>
+        <button
+          type="submit"
+          class="w-full bg-primary text-white py-2.5 px-4 rounded-button flex items-center justify-center whitespace-nowrap"
+        >
+          Save Changes
+        </button>
+      </form>
+    </div>
+    <!-- Recent Recipients Modal -->
+    <div
+      id="recipientsModal"
+      class="modal-container fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white/90 backdrop-blur-sm rounded-xl p-6 w-[90%] max-w-md hidden z-50 card-shadow"
+    >
+      <div class="flex justify-between items-center mb-6">
+        <h3 class="text-xl font-semibold text-gray-800">Recent Recipients</h3>
+        <button class="modal-close text-gray-500 hover:text-gray-700">
+          <i class="ri-close-line text-xl"></i>
+        </button>
+      </div>
+      <div class="space-y-4 max-h-[60vh] overflow-y-auto">
+        <button
+          class="w-full flex items-center p-4 hover:bg-gray-50 rounded-lg transition-colors"
+        >
+          <div class="w-12 h-12 rounded-full overflow-hidden mr-4">
+            <img
+              src="https://readdy.ai/api/search-image?query=professional%20headshot%20portrait%20of%20a%20young%20woman%20with%20long%20brown%20hair%2C%20natural%20makeup%2C%20friendly%20smile%2C%20business%20casual%20attire%2C%20clean%20studio%20background&width=100&height=100&seq=2&orientation=squarish"
+              class="w-full h-full object-cover"
+              alt="Sarah"
+            />
+          </div>
+          <div class="flex-1">
+            <div class="flex justify-between items-start mb-1">
+              <div>
+                <p class="font-medium text-gray-800">Sarah Wilson</p>
+                <p class="text-sm text-gray-500">@sarahw</p>
+              </div>
+              <div class="text-right">
+                <p class="font-medium text-primary">$250.00</p>
+                <p class="text-xs text-gray-500">Last sent May 25</p>
+              </div>
+            </div>
+          </div>
+        </button>
+        <button
+          class="w-full flex items-center p-4 hover:bg-gray-50 rounded-lg transition-colors"
+        >
+          <div class="w-12 h-12 rounded-full overflow-hidden mr-4">
+            <img
+              src="https://readdy.ai/api/search-image?query=professional%20headshot%20portrait%20of%20a%20middle%20aged%20man%20with%20short%20dark%20hair%20and%20glasses%2C%20confident%20smile%2C%20business%20attire%2C%20clean%20studio%20background&width=100&height=100&seq=3&orientation=squarish"
+              class="w-full h-full object-cover"
+              alt="Michael"
+            />
+          </div>
+          <div class="flex-1">
+            <div class="flex justify-between items-start mb-1">
+              <div>
+                <p class="font-medium text-gray-800">Michael Brown</p>
+                <p class="text-sm text-gray-500">@michaelb</p>
+              </div>
+              <div class="text-right">
+                <p class="font-medium text-primary">$180.00</p>
+                <p class="text-xs text-gray-500">Last sent May 23</p>
+              </div>
+            </div>
+          </div>
+        </button>
+        <button
+          class="w-full flex items-center p-4 hover:bg-gray-50 rounded-lg transition-colors"
+        >
+          <div class="w-12 h-12 rounded-full overflow-hidden mr-4">
+            <img
+              src="https://readdy.ai/api/search-image?query=professional%20headshot%20portrait%20of%20a%20young%20woman%20with%20blonde%20hair%2C%20natural%20makeup%2C%20warm%20smile%2C%20business%20casual%20attire%2C%20clean%20studio%20background&width=100&height=100&seq=4&orientation=squarish"
+              class="w-full h-full object-cover"
+              alt="Emma"
+            />
+          </div>
+          <div class="flex-1">
+            <div class="flex justify-between items-start mb-1">
+              <div>
+                <p class="font-medium text-gray-800">Emma Davis</p>
+                <p class="text-sm text-gray-500">@emmad</p>
+              </div>
+              <div class="text-right">
+                <p class="font-medium text-primary">$320.00</p>
+                <p class="text-xs text-gray-500">Last sent May 20</p>
+              </div>
+            </div>
+          </div>
+        </button>
+      </div>
+    </div>
+    <script id="modalScript">
+      document.addEventListener("DOMContentLoaded", function () {
+        const modalBackdrop = document.getElementById("modalBackdrop");
+        const bankDropdownBtn = document.getElementById("bankDropdownBtn");
+        const bankDropdown = document.getElementById("bankDropdown");
+        const bankNameInput = document.getElementById("bankName");
+        function toggleBankDropdown() {
+          bankDropdown.classList.toggle("hidden");
+        }
+        function selectBank(bankName) {
+          bankNameInput.value = bankName;
+          bankDropdown.classList.add("hidden");
+        }
+        bankDropdownBtn.addEventListener("click", (e) => {
+          e.preventDefault();
+          toggleBankDropdown();
+        });
+        document.querySelectorAll("#bankDropdown button").forEach((btn) => {
+          btn.addEventListener("click", function () {
+            selectBank(this.textContent);
+          });
+        });
+        document.addEventListener("click", (e) => {
+          if (
+            !bankDropdownBtn.contains(e.target) &&
+            !bankDropdown.contains(e.target)
+          ) {
+            bankDropdown.classList.add("hidden");
+          }
+        });
+        const profileEditModal = document.getElementById("profileEditModal");
+        const recipientsModal = document.getElementById("recipientsModal");
+        const profileEditBtn = document.getElementById("profileEditBtn");
+        const recipientSearchBtn = document.getElementById("recipientSearchBtn");
+        const addBankBtn = document.getElementById("addBankBtn");
+        const bankAccountForm =
+          document.getElementById("bankAccountForm").parentElement;
+        function showModal(modal) {
+          modalBackdrop.classList.remove("hidden");
+          modal.classList.remove("hidden");
+          requestAnimationFrame(() => {
+            modalBackdrop.classList.add("fade-in");
+            modal.classList.add("slide-in");
+          });
+        }
+        function hideModals() {
+          modalBackdrop.classList.remove("fade-in");
+          document.querySelectorAll(".modal-container").forEach((modal) => {
+            modal.classList.remove("slide-in");
+          });
+          setTimeout(() => {
+            modalBackdrop.classList.add("hidden");
+            profileEditModal.classList.add("hidden");
+            recipientsModal.classList.add("hidden");
+            bankAccountForm.classList.add("hidden");
+          }, 300);
+        }
+        profileEditBtn.addEventListener("click", () => showModal(profileEditModal));
+        recipientSearchBtn.addEventListener("click", () =>
+          showModal(recipientsModal),
+        );
+        addBankBtn.addEventListener("click", () => {
+          bankAccountForm.classList.remove("hidden");
+          window.scrollTo({
+            top: bankAccountForm.offsetTop - 20,
+            behavior: "smooth",
+          });
+        });
+        modalBackdrop.addEventListener("click", hideModals);
+        document.querySelectorAll(".modal-close").forEach((btn) => {
+          btn.addEventListener("click", hideModals);
+        });
+        document
+          .getElementById("profileImage")
+          .addEventListener("change", function (e) {
+            if (e.target.files && e.target.files[0]) {
+              const reader = new FileReader();
+              reader.onload = function (e) {
+                document.getElementById("profilePreview").src = e.target.result;
+              };
+              reader.readAsDataURL(e.target.files[0]);
+            }
+          });
+        document
+          .getElementById("profileEditForm")
+          .addEventListener("submit", function (e) {
+            e.preventDefault();
+            hideModals();
+          });
+        document.querySelectorAll("#recipientsModal button").forEach((btn) => {
+          btn.addEventListener("click", function () {
+            const username = this.querySelector("p:last-child").textContent;
+            document.getElementById("recipient").value = username;
+            hideModals();
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
