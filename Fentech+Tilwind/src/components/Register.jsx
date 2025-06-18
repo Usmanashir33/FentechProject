@@ -1,14 +1,40 @@
 import React, { useState } from "react";
+import useRegister from "../customHooks/registerHooks";
 const Register = () => {
+  const [registerRedirectUrl,setRegisterRedirectUrl] = useState('') 
+  const [logindetails,setLoginDetails] = useState({
+    username_field:'',
+    password:'',
+    otp:''
+  })
+  const [registerDetails,setRegisterDetails] = useState({
+    email:'',
+    phone_number :'',
+    firstName:'',
+    lastName:'',
+    password:"",
+    password2:'',
+    refarrel_code :'',
+    otp:"",
+  })
   const [activeTab, setActiveTab] = useState("login");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [verificationSent, setVerificationSent] = useState(false);
+  const [verificationSentReg, setVerificationSentReg] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [resetEmail, setResetEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  // custom hooks config 
+  const {login,register,completeRegisterAccount} = useRegister(setVerificationSent,setVerificationSentReg,setRegisterRedirectUrl);
+  const handleLogin = () => {
+    if (logindetails.username_field && logindetails.password.length >= 8) {
+      login(logindetails,'/authuser/loginRequest/')
+    }
+  }
   const handleGoogleLogin = async () => {
     setIsLoading(true);
     try {
@@ -32,9 +58,6 @@ const Register = () => {
       setIsLoading(false);
     }
   };
-  const handleSendVerification = () => {
-    setVerificationSent(true);
-  };
   const handleShowForm = (tab) => {
     setActiveTab(tab);
     setShowForm(true);
@@ -49,7 +72,7 @@ const Register = () => {
       }}
     >
       {/* Header */}
-      <header className=" sticky z-50 top-0 w-full px-8 py-2  mb-4 flex justify-between items-center bg-blue-900 bg-opacity-90  backdrop-blur-md">
+      <header className=" sticky z-40 top-0 w-full px-8 py-2  mb-4 flex justify-between items-center bg-blue-900 bg-opacity-90  backdrop-blur-md">
         <div className="flex items-center">
           <i className="fas fa-shield-alt text-white text-3xl mr-3"></i>
           <h1 className="text-2xl font-bold text-white">FineTech</h1>
@@ -69,6 +92,7 @@ const Register = () => {
           </button>
         </div>
       </header>
+
       {/* Main Content */}
       <div className="flex-1 flex items-center justify-center ">
         {!showForm ? (
@@ -125,6 +149,7 @@ const Register = () => {
                       Sign Up
                     </button>
                   </div>
+
                   {/* Login Form */}
                   {activeTab === "login" && (
                     <div className="space-y-2">
@@ -133,9 +158,17 @@ const Register = () => {
                           <i className="fas fa-envelope text-blue-400"></i>
                         </div>
                         <input
+                        disabled={verificationSent}
+                        value={logindetails.username_field}
+                        onChange={(e) => {
+                          setLoginDetails((prev) => ({
+                             ...prev,
+                             username_field: e.target.value
+                           }));
+                          }}
                           type="text"
                           className="w-full  bg-opacity-20 border-none text-blue-900 placeholder-blue-00 pl-10 pr-2 py-3 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none text-sm font-medium"
-                          placeholder="Email or Username"
+                          placeholder="Email or Username or phone number "
                         />
                       </div>
                       <div className="relative">
@@ -143,6 +176,13 @@ const Register = () => {
                           <i className="fas fa-lock text-blue-400"></i>
                         </div>
                         <input
+                        disabled={verificationSent}
+                        value={logindetails.password}
+                        onChange={(e) => setLoginDetails((prev) => ({
+                          ...prev,password:e.target.value
+                        }))}
+                        maxLength={'15'}
+                        minLength={'8'}
                           type={showPassword ? "text" : "password"}
                           className="w-full  bg-opacity-20 border-none text-blue-900 placeholder-blue-00 pl-10 pr-4 py-3 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none text-sm font-medium"
 
@@ -157,6 +197,29 @@ const Register = () => {
                           ></i>
                         </div>
                       </div>
+                      {verificationSent && (
+                        <div className="space-y-2">
+                          <div className="relative">
+                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                              <i className="fas fa-key text-blue-400"></i>
+                            </div>
+                            <input
+                             value={logindetails.otp}
+                              onChange={(e) => setLoginDetails((prev) => ({
+                                ...prev,otp:e.target.value
+                              }))}
+                              maxLength={'15'}
+                              minLength={'8'}
+                              type="text"
+                              className="w-full bg-white bg-opacity-25 border-none font-medium pl-10 pr-4 py-3 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none text-sm"
+                              placeholder="Enter Email Verification Code Sent"
+                            />
+                          </div>
+                          <p className="text-xs text-blue-100">
+                            Verification code has been sent to your email.
+                          </p>
+                        </div>
+                      )}
                       <div className="text-right">
                         <button
                           onClick={() => setShowForgotPassword(true)}
@@ -165,6 +228,7 @@ const Register = () => {
                           Forgot Password?
                         </button>
                       </div>
+
                       {showForgotPassword && (
                         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
                           <div className="bg-white rounded-lg p-6 w-96 relative">
@@ -207,7 +271,9 @@ const Register = () => {
                           </div>
                         </div>
                       )}
-                      <button className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 px-4 rounded-lg transition-colors cursor-pointer whitespace-nowrap !rounded-button">
+                      <button 
+                      onClick={handleLogin}
+                      className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 px-4 rounded-lg transition-colors cursor-pointer whitespace-nowrap !rounded-button">
                         Login
                       </button>
                       <div className="relative flex items-center justify-center my-6">
@@ -241,6 +307,11 @@ const Register = () => {
                             <i className="fas fa-user text-blue-400"></i>
                           </div>
                           <input
+                          value={registerDetails.firstName}
+                          disabled={verificationSentReg}
+                          onChange={(e) => {setRegisterDetails((prev) => ({
+                            ...prev,firstName:e.target.value
+                          }))}}
                             type="text"
                           className="w-full border-none pl-10 pr-4 py-3 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none text-sm font-medium"
 
@@ -255,6 +326,11 @@ const Register = () => {
                             <i className="fas fa-user text-blue-400"></i>
                           </div>
                           <input
+                          value={registerDetails.lastName}
+                          disabled={verificationSentReg}
+                          onChange={(e) => {setRegisterDetails((prev) => ({
+                            ...prev,lastName:e.target.value
+                          }))}}
                             type="text"
                             className="w-full font-medium  bg-opacity-25 border-none  pl-10 pr-4 py-3 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none text-sm"
                             placeholder="Last Name"
@@ -266,6 +342,11 @@ const Register = () => {
                           <i className="fas fa-phone text-blue-400"></i>
                         </div>
                         <input
+                        value={registerDetails.phone_number}
+                        disabled={verificationSentReg}
+                          onChange={(e) => {setRegisterDetails((prev) => ({
+                            ...prev,phone_number:e.target.value
+                          }))}}
                           type="tel"
                           className="w-full font-medium bg-opacity-25 border-none font-medium pl-10 pr-4 py-3 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none text-sm"
                           placeholder="Phone Number"
@@ -276,6 +357,11 @@ const Register = () => {
                           <i className="fas fa-envelope text-blue-400"></i>
                         </div>
                         <input
+                        value={registerDetails.email}
+                        disabled={verificationSentReg}
+                          onChange={(e) => {setRegisterDetails((prev) => ({
+                            ...prev,email:e.target.value
+                          }))}}
                           type="email"
                           className="w-full bg-white bg-opacity-25 border-none font-medium pl-10 pr-4 py-3 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none text-sm"
                           placeholder="Email Address"
@@ -286,6 +372,11 @@ const Register = () => {
                           <i className="fas fa-user-circle text-blue-400"></i>
                         </div>
                         <input
+                        value={registerDetails.username}
+                        disabled={verificationSentReg}
+                          onChange={(e) => {setRegisterDetails((prev) => ({
+                            ...prev,username:e.target.value
+                          }))}}
                           type="text"
                           className="w-full bg-white bg-opacity-25 border-none font-medium pl-10 pr-4 py-3 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none text-sm"
                           placeholder="Username"
@@ -296,6 +387,11 @@ const Register = () => {
                           <i className="fas fa-lock text-blue-400"></i>
                         </div>
                         <input
+                        value={registerDetails.password}
+                        disabled={verificationSentReg}
+                          onChange={(e) => {setRegisterDetails((prev) => ({
+                            ...prev,password:e.target.value
+                          }))}}
                           type={showPassword ? "text" : "password"}
                           className="w-full font-medium  bg-opacity-10 border-none  pl-10 pr-10 py-3 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none text-sm"
                           placeholder="Password"
@@ -314,6 +410,11 @@ const Register = () => {
                           <i className="fas fa-lock text-blue-400"></i>
                         </div>
                         <input
+                        value={registerDetails.password2}
+                        disabled={verificationSentReg}
+                          onChange={(e) => {setRegisterDetails((prev) => ({
+                            ...prev,password2:e.target.value
+                          }))}}
                           type={showConfirmPassword ? "text" : "password"}
                           className="w-full font-medium bg-opacity-10 border-noneplaceholder-blue-200 pl-10 pr-10 py-3 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none text-sm"
                           placeholder="Confirm Password"
@@ -329,6 +430,28 @@ const Register = () => {
                           ></i>
                         </div>
                       </div>
+                        {verificationSentReg && (
+                        <div className="space-y-2">
+                          <div className="relative">
+                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                              <i className="fas fa-key text-blue-400"></i>
+                            </div>
+                            <input
+                              value={registerDetails.otp} 
+                              onChange={(e) => {setRegisterDetails((prev) => ({
+                                ...prev,otp:e.target.value
+                              }))}}
+                              type="text"
+                              className="w-full bg-white bg-opacity-25 border-none font-medium pl-10 pr-4 py-3 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none text-sm"
+                              placeholder="Enter Email Verification Code"
+                            />
+                          </div>
+                          <p className="text-xs text-blue-100">
+                            Verification code has been sent to your email.
+                          </p>
+                        </div>
+                      )}
+
                       <div className="space-y-4">
                         <div className="flex items-center">
                           <input
@@ -358,7 +481,7 @@ const Register = () => {
                             </a>
                           </label>
                         </div>
-                        <button
+                        {!registerRedirectUrl && <button
                           id="signUpButton"
                           onClick={async () => {
                             if (!acceptedTerms) return;
@@ -429,24 +552,22 @@ const Register = () => {
                                 "fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50";
                               errorDiv.textContent = errorMessage;
                               document.body.appendChild(errorDiv);
-                              setTimeout(() => errorDiv.remove(), 5000);
+                              setTimeout(() => errorDiv.remove(), 2000);
                               setIsLoading(false);
                               return;
                             }
 
                             try {
                               // Simulate API call
-                              await new Promise((resolve) =>
-                                setTimeout(resolve, 1500),
-                              );
-                              setVerificationSent(true);
+                              // register 
+                              register(registerDetails);
                             } catch (error) {
                               console.error("Registration error:", error);
                             } finally {
                               setIsLoading(false);
                             }
                           }}
-                          className={`w-full ${acceptedTerms ? "bg-blue-500 border hover:bg-blue-600" : "bg-blue-500/50 cursor-not-allowed"} text-white font-medium py-3 px-4 rounded-lg transition-colors whitespace-nowrap !rounded-button relative`}
+                          className={`w-full ${acceptedTerms ? "bg-blue-500 border hover:bg-blue-600" : "bg-blue-900 cursor-not-allowed"} text-white font-medium py-3 px-4 rounded-lg transition-colors whitespace-nowrap !rounded-button relative`}
                           disabled={!acceptedTerms || isLoading}
                         >
                           {isLoading ? (
@@ -457,25 +578,24 @@ const Register = () => {
                           ) : (
                             "Sign Up"
                           )}
-                        </button>
-                      </div>
-                      {verificationSent && (
-                        <div className="space-y-2">
-                          <div className="relative">
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                              <i className="fas fa-key text-blue-400"></i>
+                        </button>}
+
+                        {registerRedirectUrl && <button
+                          id="signUpButton"
+                          onClick={() => {completeRegisterAccount(registerDetails,registerRedirectUrl),console.log(registerRedirectUrl);}}
+                          className={`bbd w-full ${acceptedTerms ? "bg-blue-500 border hover:bg-blue-600" : "bg-blue-900 cursor-not-allowed"} text-white font-medium py-3 px-4 rounded-lg transition-colors whitespace-nowrap !rounded-button relative`}
+                          disabled={!acceptedTerms || isLoading}
+                        >
+                          {isLoading ? (
+                            <div className="flex items-center justify-center ">
+                              <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent mr-2"></div>
+                              Processing...
                             </div>
-                            <input
-                              type="text"
-                              className="w-full bg-white bg-opacity-25 border-none font-medium pl-10 pr-4 py-3 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none text-sm"
-                              placeholder="Enter Email Verification Code"
-                            />
-                          </div>
-                          <p className="text-xs text-blue-100">
-                            Verification code has been sent to your email.
-                          </p>
-                        </div>
-                      )}
+                          ) : (
+                            "Complete Registration"
+                          )}
+                        </button>}
+                      </div>
                     </div>
                   )}
                   {/* Footer */}
@@ -506,6 +626,7 @@ const Register = () => {
           </div>
         )}
       </div>
+
     </div>
   );
 };

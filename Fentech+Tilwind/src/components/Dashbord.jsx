@@ -1,7 +1,11 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import Transections from "./Transections";
+import { authContext } from "../customContexts/AuthContext";
+import { uiContext } from "../customContexts/UiContext";
 
 const Dashboard = () => {
+    const {currentUser} = useContext(authContext);
+    const {formatNaira} = useContext(uiContext);
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [dateRange, setDateRange] = useState({ start: '', end: '' });
     const [transactionType, setTransactionType] = useState('');
@@ -39,18 +43,14 @@ const Dashboard = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-gray-600">Account Balance</p>
-                    <p className="md:text-2xl font-bold text-gray-900">$24,563.00</p>
+                    <p className="md:text-2xl font-bold text-gray-900">{formatNaira(currentUser?.account?.account_balance)}</p>
                   </div>
                   <div className="p-2 bg-blue-50 rounded-full">
                     <i className="fas fa-dollar-sign text-blue-500"></i>
                   </div>
                 </div>
                 <div className="flex items-center mt-4">
-                  <span className="flex items-center text-sm text-green-500">
-                    <i className="fas fa-arrow-up mr-1"></i>
-                    <span>3.5%</span>
-                  </span>
-                  <span className="ml-2 text-sm text-gray-500">from last month</span>
+                  <span className="ml-2 text-sm text-gray-500">current spendable balance </span>
                 </div>
               </div>
               {/* Income */}

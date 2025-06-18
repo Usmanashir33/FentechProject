@@ -5,7 +5,7 @@ import { faCircleCheck, faEye, faEyeSlash } from "@fortawesome/free-solid-svg-ic
 import PinsPage from "../PinsPage";
 import useAlterSetting from "../../customHooks/settingHook";
 
-const PaymentSettings = () => {
+const PaymentSettings = () => { 
     const [password1Vis,setPassword1Vis] = useState(false);
     const [password2Vis,setPassword2Vis] = useState(false);
 

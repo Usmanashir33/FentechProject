@@ -6,7 +6,7 @@ from .views import PinChangeView,PinResetRequestView,PinResetView,PasswordForget
 
 
 urlpatterns = [
-    path('register/',RegisterView.as_view(),name='register'),
+    path('register/',RegisterView.as_view(),name='register'), 
     path('register/verify-email/',RegisterVerifyView.as_view(),name='register-verify'),
     
     path('loginRequest/',LoginRequestView.as_view(),name='login-requests'),

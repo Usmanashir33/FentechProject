@@ -119,7 +119,6 @@ class AccountNumberCreationView(APIView):
         url = "https://api.flutterwave.com/v3/virtual-account-numbers"
         user = request.user
         if user.account.accountnumbers.all():
-            print("accounts available : ",user.account.accountnumbers.all().first())
             return Response({'success':'max accounts exit for the user'},status=status.HTTP_200_OK)
         print("accounts creating..... ")
         try :
@@ -153,7 +152,6 @@ class AccountNumberCreationView(APIView):
                )
                user.account.account_balance + int(data['amount'])  # to avoid making balance zero when the new accont created
                user.save()
-               print('user acconut : ', new_account_num)
                
             return Response({'success':'account number craeted'},status=status.HTTP_200_OK)
         except :
@@ -275,7 +273,7 @@ class SettingWithDrawalAccount(APIView):
                 # validate account existance 
                 account_found = user.account.withdrawalaccounts.filter(
                     account_number = request.data.get("account_number"),
-                    bank_code = request.data.get("bank_code")
+                    bank_code = request.data.get("bank_code") 
                 ).exists()
                 
                 if account_found:
@@ -291,12 +289,19 @@ class SettingWithDrawalAccount(APIView):
                     bank_name =  request.data.get("bank_name"),
                     bank_code =  request.data.get("bank_code")
                 )
+                is_default = request.data.get('is_default',False)
+                if is_default :
+                    # set it default
+                    for acc in user.account.withdrawalaccounts.all() :
+                        acc.is_default = False
+                        acc.save()
+                    new_account.is_default = True
+                    new_account.save()
                 new_account = WithdrawalAccountSerializer(new_account).data
-                print(' new account Added ')
                 return Response({'success':'New Account Added','new_account':new_account}, status = status.HTTP_200_OK)
         except :
             return Response({'error':'server failed '}, status = status.HTTP_200_OK)
-class FetchWithdrawalAccount(APIView):
+class FetchWithdrawalAccount(APIView): 
     def get(self, request ):
         try :
             user = request.user
@@ -305,19 +310,38 @@ class FetchWithdrawalAccount(APIView):
             return Response({'accounts':accounts}, status = status.HTTP_200_OK)
         except :
             return Response({'error':'server failed '}, status = status.HTTP_200_OK)
-class DeleteWithdrawalAccount(APIView):
+class EditWithdrawalAccount(APIView):
     def delete(self, request, account_id ):
         try :
             user = request.user
             payment_pin = request.data.get('payment_pin')
             # validate pin
             if payment_pin != user.payment_pin:
-                print(' invalid pin ')
                 return Response({'error':'invalid pin'}, status = status.HTTP_200_OK)
             account = WithdrawalAccount.objects.get(id = account_id)
             if account.account == user.account:
                 account.delete()
                 return Response({'success':'account deleted','id':account_id}, status = status.HTTP_200_OK)
+            return Response({'error':'account not found'}, status = status.HTTP_200_OK)
+        except :
+            return Response({'error':'server failed '}, status = status.HTTP_200_OK)
+    def put(self, request, account_id ):
+        try :
+            user = request.user
+            payment_pin = request.data.get('payment_pin')
+            # validate pin
+            if payment_pin != user.payment_pin:
+                return Response({'error':'invalid pin'}, status = status.HTTP_200_OK)
+            account = WithdrawalAccount.objects.get(id = account_id)
+            if account.account == user.account:
+                # remove remaining_defaults 
+                for acc in user.account.withdrawalaccounts.all() :
+                    acc.is_default = False
+                    acc.save()
+                # set_it default
+                account.is_default = True
+                account.save()
+                return Response({'success':'account is set to default ','id':account_id,'defaulting':True}, status = status.HTTP_200_OK)
             return Response({'error':'account not found'}, status = status.HTTP_200_OK)
         except :
             return Response({'error':'server failed '}, status = status.HTTP_200_OK)

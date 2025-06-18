@@ -1,79 +1,67 @@
-import { useNavigate } from "react-router";
+import { useContext, useEffect, useState, } from "react";
+import { liveContext } from "../customContexts/LiveContext";
+import NotifCard from "./NotificationCard";
+import {LucideTrash2, Trash, TriangleDashedIcon  } from "lucide-react";
+import { uiContext } from "../customContexts/UiContext";
 
 const Rightbar = () => {
-    const navigate = useNavigate();
-    const checkActive = (navPath) => {
-        let current_location = document.location.pathname ;
-        return navPath === current_location ? "active" : ''
+    const {notifications,sendRequest} = useContext(liveContext);
+    const [deleteAll,setShowDeleteAll] = useState(false);
+    
+    useEffect(() => {
+      const unread = notifications.filter(notification => notification.viewed === false);
+      if (unread.length > 0){ // read un read ones
+        sendRequest('/account/read_notif/','GET','')
     }
+  },[])
+    
     return ( 
         <>
-          <div className="p-5  border-b sticky top-0 z-20 bg-white">
-            <h3 className="text-lg font-medium text-gray-900">Notifications</h3>
-          </div>
-          <div className="divide-y">
-            <div className="p-4 hover:bg-gray-50">
-              <div className="flex items-start">
-                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
-                  <i className="fas fa-money-bill text-blue-500"></i>
-                </div>
-                <div className="ml-3 flex-1">
-                  <p className="text-sm font-medium text-gray-900">New Payment Received</p>
-                  <p className="text-sm text-gray-500">You received $350.00 from Alex Johnson</p>
-                  <p className="mt-1 text-xs text-gray-400">2 minutes ago</p>
-                </div>
-              </div>
+         {deleteAll && <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 w-md ">
+          <div className="bg-white rounded-xl p-4 w-[90%] max-w-md">
+            <div className="flex justify-between items-center mb-6 gap-10">
+              <h3 className="text-xl font-semibold">Delete All Notification </h3>
+              <button onClick={() => {setShowDeleteAll(false)}} className="text-gray-500">
+                <i className="fas fa-times"></i>
+              </button>
             </div>
-            <div className="p-4 hover:bg-gray-50">
-              <div className="flex items-start">
-                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-yellow-100 flex items-center justify-center">
-                  <i className="fas fa-bell text-yellow-500"></i>
-                </div>
-                <div className="ml-3 flex-1">
-                  <p className="text-sm font-medium text-gray-900">Account Alert</p>
-                  <p className="text-sm text-gray-500">Your account balance is below $1000</p>
-                  <p className="mt-1 text-xs text-gray-400">1 hour ago</p>
-                </div>
-              </div>
-            </div>
-            <div className="p-4 hover:bg-gray-50">
-              <div className="flex items-start">
-                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
-                  <i className="fas fa-check text-green-500"></i>
-                </div>
-                <div className="ml-3 flex-1">
-                  <p className="text-sm font-medium text-gray-900">Transfer Complete</p>
-                  <p className="text-sm text-gray-500">Transfer to savings account completed</p>
-                  <p className="mt-1 text-xs text-gray-400">2 hours ago</p>
-                </div>
-              </div>
-            </div>
-            <div className="p-4 hover:bg-gray-50">
-              <div className="flex items-start">
-                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
-                  <i className="fas fa-check text-green-500"></i>
-                </div>
-                <div className="ml-3 flex-1">
-                  <p className="text-sm font-medium text-gray-900">Transfer Complete</p>
-                  <p className="text-sm text-gray-500">Transfer to savings account completed</p>
-                  <p className="mt-1 text-xs text-gray-400">2 hours ago</p>
-                </div>
-              </div>
-            </div>
-            <div className="p-4 hover:bg-gray-50">
-              <div className="flex items-start">
-                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
-                  <i className="fas fa-check text-green-500"></i>
-                </div>
-                <div className="ml-3 flex-1">
-                  <p className="text-sm font-medium text-gray-900">Transfer Complete</p>
-                  <p className="text-sm text-gray-500">Transfer to savings account completed</p>
-                  <p className="mt-1 text-xs text-gray-400">2 hours ago</p>
-                </div>
-              </div>
+            <p className="text-sm text-red-600 bg-red-100 p-1 px-2 rounded-full">All notifications will be permanently deleted !</p>
+
+            <div className="flex justify-between gap-4 mt-4">
+              <button type="button" className="bg-red-500 text-white p-2 rounded-md w-full hover:opacity-70 flex gap-3 justify-center items-center"
+                onClick={() => {
+                  setShowDeleteAll(false)
+                  sendRequest(`/account/delete_notifs/`,'GET',null);
+
+                }}
+              > 
+                <Trash className="w-4 h-4"/>
+                Confirm Delete 
+
+              </button>
             </div>
             
           </div>
+        </div>}
+          <div className="p-3 border-b sticky top-0 z-10 bg-white flex items-center justify-between">
+            <h3 className="text-lg font-medium text-gray-900">Notifications</h3>
+            <LucideTrash2 className="p-1 text-yellow-900 rounded-lg hover:bg-red-500 hover:text-white"
+            onClick={() => {
+              setShowDeleteAll(true);
+            }}
+            />
+          </div>
+          {/* notifications here  */}
+          {notifications.length > 0 ? notifications.map((notif) => 
+            <div className="p-1 hover:bg-gray-100 relative rounded-l" key={notif.id} >
+              < NotifCard notification={notif}/>
+            </div>
+          ) : (
+            <div className="flex border m-4 rounded-lg justify-center items-center gap-2 font-medium text-gray-500 p-5 mt-10">
+              No records found !
+            </div>
+          )
+          }
         </>
      );
 }

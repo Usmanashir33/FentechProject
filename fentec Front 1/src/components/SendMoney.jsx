@@ -12,7 +12,7 @@ import useSendTransection from "../customHooks/SendTransection";
 import { authContext } from "../customContexts/AuthContext";
 import { liveContext } from "../customContexts/LiveContext";
 
-const SendMoneyPage = () => {
+const SendMoneyPage = () => { 
   const RAcco = useRef();
   const RAccoHis = useRef();
   const {sendSearchRequest} = useSearchRequest();

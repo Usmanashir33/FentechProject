@@ -6,7 +6,7 @@ const UiContextProvider = ({children}) => {
     const [formLoading,setFormLoading] = useState(false) ;
     const [loading,setLoading] = useState(false) ;
     const [error,setError] = useState('') ;
-    const [success,setSuccess] = useState('')
+    const [success,setSuccess] = useState('');
     const [airtimeOrData,setAirtimeOrData] = useState('');
     const [showLogOut,setShowLogOut] = useState('') ;
     const [PoPPageAction,setPorPPageAction] = useState('');
@@ -51,43 +51,7 @@ const UiContextProvider = ({children}) => {
     useEffect(() => {
         stopChildLinks()
     })
-
-    const themes = {
-        "light" : {
-            "bgColor" : "#fffdfd",
-            "bgColor2" : "#f2fcfe",
-
-            "iconColor" : "#3ca4cc",
-            "iconColor2" : "#3ca4cc",
-            "color" : "#000506",
-            "color2" : "#4d3f5a",
-        },
-        "dark" : {
-            "bgColor" : "#1d1e1d",
-            "bgColor2" : "#090001",
-
-            "iconColor" : "#4af5c9",
-            "iconColor2" : "#6ab866",
-            "color" : "#e9e7e8",
-            "color2" : "#fffdfd",
-        },
-        "blank" : {
-            "bgColor":"",
-            "bgColor2":"",
-            "iconColor":"",
-            "color":"",
-        },
-    }
-    const [theme,setTheme]= useState(() => 
-        localStorage.getItem("currentTheme")? JSON.parse(localStorage.getItem("currentTheme")) : themes['light']
-    )
-    const chooseTheme = (choice) => {
-        let choosed = themes[choice]
-        setTheme(choosed) 
-        if (choosed) {
-            localStorage.setItem("currentTheme",JSON.stringify(choosed))
-        }
-    }
+    
     const getFormattedDate= (rawDate) => {
         const date = new Date(rawDate);
         if (isNaN(date.getTime())) return null;
@@ -95,7 +59,6 @@ const UiContextProvider = ({children}) => {
         const options = { hour: '2-digit', minute: '2-digit', hour12: true };
       
         let string = `${date.getDate()}-${date.toLocaleString('en-US', { month: 'short' })}-${date.getFullYear()} at ${date.toLocaleTimeString('en-US', options)}`
-   
         return string;}
       
     return ( 

@@ -1,18 +1,28 @@
-// The exported code uses Tailwind CSS. Install Tailwind CSS in your dev environment to ensure all styles work.
-import React, { useState, useRef, useEffect } from "react";
-// interface DateRange {
-//   startDate: string;
-//   endDate: string;
-// }
+import { useState, useRef, useEffect, useContext } from "react";
+import { liveContext } from "../customContexts/LiveContext";
+import useExRequest from "../customHooks/ExternalRequestHook";
+import { uiContext } from "../customContexts/UiContext";
+import Pins from "./PinsPage";
+
 const WithdrawalRequests = () => {
+  const {sendExRequest} = useExRequest();
   const [activeTab, setActiveTab] = useState("pending");
+  const {withdrawalRequests,setWithdrawalRequests} = useContext(liveContext);
+  const {formatNaira,getFormattedDate,setSuccess,setError} = useContext(uiContext);
+  const [pinDialog, setPinDialog] = useState(false);
+  const [formData, setFormData] = useState({ 
+        approval:null,
+        trx_id:null,
+        reason:'',
+      });
+  
+  const [filteredWithdrawals,setFilteredWithdrawals] = useState([]);
+
   const [dateFilter, setDateFilter] = useState("today");
   const [searchQuery, setSearchQuery] = useState("");
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [showAcceptModal, setShowAcceptModal] = useState(false);
-  const [rejectRequestId, setRejectRequestId] = useState("");
-  const [acceptRequestId, setAcceptRequestId] = useState("");
   const [showAcceptAllModal, setShowAcceptAllModal] = useState(false);
   const [showRejectAllModal, setShowRejectAllModal] = useState(false);
   const [selectedRange, setSelectedRange] = useState({
@@ -54,83 +64,33 @@ const WithdrawalRequests = () => {
       today: today.toISOString().split("T")[0],
     };
   };
-  const pendingRequests = [
-    {
-      id: "WD-2310150001",
-      name: "Sarah Johnson",
-      amount: 2500,
-      bankName: "Bank of America",
-      accountNumber: "****4589",
-      date: "Oct 15, 2023",
-      status: "Pending",
-    },
-    {
-      id: "WD-2310150002",
-      name: "Michael Chen",
-      amount: 1800,
-      bankName: "Chase Bank",
-      accountNumber: "****7623",
-      date: "Oct 15, 2023",
-      status: "Pending",
-    },
-    {
-      id: "WD-2310150003",
-      name: "Emily Wilson",
-      amount: 3200,
-      bankName: "Wells Fargo",
-      accountNumber: "****9012",
-      date: "Oct 15, 2023",
-      status: "Pending",
-    },
-    {
-      id: "WD-2310150004",
-      name: "David Brown",
-      amount: 1500,
-      bankName: "Citibank",
-      accountNumber: "****3456",
-      date: "Oct 15, 2023",
-      status: "Pending",
-    },
-  ];
+  const [pendingRequests,setPendingRequests] = useState([]);
+  const [rejectedRequests,setRejectedRequests] = useState(  []);
 
-  const acceptedRequests = [
-    {
-      id: "WD-2310140001",
-      name: "Robert Smith",
-      amount: 3500,
-      bankName: "Wells Fargo",
-      accountNumber: "****1234",
-      date: "Oct 14, 2023",
-      status: "Accepted",
-    },
-    {
-      id: "WD-2310140002",
-      name: "Lisa Anderson",
-      amount: 2800,
-      bankName: "Chase Bank",
-      accountNumber: "****5678",
-      date: "Oct 14, 2023",
-      status: "Accepted",
-    },
-    {
-      id: "WD-2310140003",
-      name: "James Wilson",
-      amount: 4200,
-      bankName: "Bank of America",
-      accountNumber: "****9012",
-      date: "Oct 14, 2023",
-      status: "Accepted",
-    },
-    {
-      id: "WD-2310140004",
-      name: "Emma Davis",
-      amount: 1900,
-      bankName: "Citibank",
-      accountNumber: "****3456",
-      date: "Oct 14, 2023",
-      status: "Accepted",
-    },
-  ];
+  const [acceptedRequests,setAcceptedRequests] = useState([]);
+
+  const handleAcceptorRejectServerResposne = (data) => {  
+      const updated_trx = data.data
+      if(data.success){
+        setPinDialog(false);
+        setSuccess(data.success)
+        setWithdrawalRequests(withdrawalRequests.map((trx) => {
+          if (trx?.id === updated_trx.id) {
+            return updated_trx;
+          }else{
+            return trx;
+          }
+        }));
+    }else{
+      setError('Unknown Error!')
+    }
+  }
+  const handlePinConfirm = (pin) => {
+     let data = formData
+      data.payment_pin = pin
+      sendExRequest("/account/withdraw-money-requests/", "POST", data,handleAcceptorRejectServerResposne)
+    
+  }
   const handleTabChange = (tab) => {
     setActiveTab(tab);
   };
@@ -140,27 +100,50 @@ const WithdrawalRequests = () => {
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
   };
-  const handleAccept = (id) => {
-    console.log(`Accepted request ${id}`);
-  };
-  const handleRejectClick = (id) => {
-    setRejectRequestId(id);
-    setShowRejectModal(true);
-  };
-  const handleRejectConfirm = () => {
-    console.log(`Rejected request ${rejectRequestId}`);
-    setShowRejectModal(false);
-    setRejectRequestId("");
-  };
+ 
+  const buttonClicked = (action,trx_selected) => {
+      setFormData({ ...formData, approval: action, trx_id: trx_selected});
+      if (action === "approve") {
+        setShowAcceptModal(true);
+      }else if (action === "cancel") {
+        setShowRejectModal(true);
+      }
+    }
+
   const handleRejectCancel = () => {
     setShowRejectModal(false);
-    setRejectRequestId("");
+    setFormData({ ...formData,trx_id:''});
   };
+  
+
+  const displayWithdrawals = (data) => {
+    // console.log('data: ', data)?.data;
+      setWithdrawalRequests(data.data)
+    }
+
+  useEffect(() => {
+    setPendingRequests([
+      ...withdrawalRequests?.filter((withdrawal) => (withdrawal.status == 'pending')) || []
+    ])
+    setAcceptedRequests([
+      ...withdrawalRequests.filter((withdrawal) => withdrawal.status == 'approved') || []
+    ])
+    setRejectedRequests([
+      ...withdrawalRequests.filter((withdrawal) => withdrawal.status == 'cancelled') || []
+    ])
+  },[withdrawalRequests])
+  useEffect(() => {
+      // fetch pending withdrawals 
+      sendExRequest("/account/withdraw-money-requests/", "GET", null,displayWithdrawals )
+    },[])
   return (
-    <div className="min-h-screen bg-gray-50 w-full  relative ">
+    <div className="min-h-screen bg-gray-50 w-full relative   ">
+      {pinDialog && <div className="w-full h-screen   bg-white  shadow-lg  sticky top-0 z-20 ">
+        {<Pins close={setPinDialog}  triggerFunc={handlePinConfirm} />}
+      </div>}
         
       {/* Header */}
-      <header className="w-full   bg-white  shadow-sm sticky top-0 z-10 ">
+      <header className="w-full  bg-white  shadow-sm sticky top-0 z-10 ">
         {/* Tabs */}
         <div className="border-b border-gray-200  overflow-x-hidden">
           <nav className="flex  justify-between">
@@ -174,7 +157,7 @@ const WithdrawalRequests = () => {
             >
               Pending Requests{" "}
               <span className="ml-1.5 py-0.5 px-2 bg-gray-100 text-gray-600 rounded-full text-xs">
-                12
+                {pendingRequests?.length || '0'}
               </span>
             </button>
 
@@ -188,21 +171,21 @@ const WithdrawalRequests = () => {
             >
               Accepted Requests{" "}
               <span className="ml-1.5 py-0.5 px-2 bg-gray-100 text-gray-600 rounded-full text-xs">
-                45
+                {acceptedRequests?.length || 0 }
               </span>
             </button>
             <button
-              onClick={() => handleTabChange("rejected")}
+              onClick={() => handleTabChange("cancelled")}
               className={` cursor-pointer py-4 px-2 border-b-2 font-medium text-sm ${
-                activeTab === "rejected"
+                activeTab === "cancelled"
                   ? "border-blue-500 text-blue-600"
                   : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
               }`}
             >
               Rejected Requests{" "}
               <span className="ml-1.5 py-0.5 px-2 bg-gray-100 text-gray-600 rounded-full text-xs">
-                8
-              </span>
+                {rejectedRequests?.length || 0 }
+              </span> 
             </button>
           </nav>
         </div>
@@ -351,10 +334,11 @@ const WithdrawalRequests = () => {
       </div>
 
       {/* Content */}
-      <div className=" max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-          {(activeTab === "pending" ? pendingRequests : acceptedRequests).map(
-            (request) => (
+          {(activeTab === "pending" ? pendingRequests :
+            activeTab === "cancelled" ? rejectedRequests :
+            acceptedRequests ).map((request) => (
               <div
                 key={request.id}
                 className="bg-white rounded-xl shadow-sm overflow-hidden"
@@ -362,58 +346,59 @@ const WithdrawalRequests = () => {
                 <div className="p-4">
                   <div className="flex justify-between items-start mb-2">
                     <h3 className="text-base font-medium text-gray-900">
-                      {request.name}
+                      {request.user?.first_name} {request.user?.last_name} 
                     </h3>
                     <span
                       className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-                        request.status === "Pending"
-                          ? "bg-yellow-100 text-yellow-800"
-                          : "bg-green-100 text-green-800"
+                        request?.status?.toLowerCase() == "pending"? "bg-yellow-100 text-yellow-800":
+                        request?.status?.toLowerCase() == "cancelled"? "bg-red-100 text-red-800":
+                         "bg-green-100 text-green-800"
                       }`}
                     >
-                      {request.status}
+                      {request?.status}
                     </span>
                   </div>
                   <p className="text-xl font-semibold text-gray-900 mb-3">
-                    ${request.amount.toLocaleString()}
+                    {formatNaira(request?.amount)}
+                    {/* {(request?.amount)} */}
                   </p>
                   <div className="grid grid-cols-2 gap-3 mb-3">
                     <div>
+                      <p className="text-xs text-gray-500">Account Name</p>
+                      <p className="text-sm font-medium text-gray-900">
+                        {request?.withdrawal_account_name}
+                      </p>
+                    </div>
+                    <div>
                       <p className="text-xs text-gray-500">Bank Name</p>
                       <p className="text-sm font-medium text-gray-900">
-                        {request.bankName}
+                        {request?.withdrawal_bank_name}
                       </p>
                     </div>
                     <div>
                       <p className="text-xs text-gray-500">Account Number</p>
                       <p className="text-sm font-medium text-gray-900">
-                        {request.accountNumber}
+                        {request?.withdrawal_account_number}
                       </p>
                     </div>
                     <div>
-                      <p className="text-xs text-gray-500">Request Date</p>
+                      <p className="text-xs text-gray-500">Date & Time</p>
                       <p className="text-sm font-medium text-gray-900">
-                        {request.date}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-gray-500">Request ID</p>
-                      <p className="text-sm font-medium text-gray-900">
-                        {request.id}
+                        {getFormattedDate(request?.updated_at || request?.trx_date)}
                       </p>
                     </div>
                   </div>
                   <div className="flex space-x-3">
-                    {request.status === "Pending" ? (
+                    {request?.status?.toLowerCase() === "pending" ? (
                       <>
                         <button
-                          onClick={() => handleAcceptClick(request.id)}
+                          onClick={(e) => buttonClicked('approve',request.id)}
                           className="!rounded-button whitespace-nowrap cursor-pointer flex-1 bg-blue-600 text-white py-2 text-sm rounded-md flex justify-center items-center hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                         >
                           <i className="fas fa-check mr-2"></i> Accept
                         </button>
                         <button
-                          onClick={() => handleRejectClick(request.id)}
+                          onClick={() => buttonClicked('cancel',request.id)}
                           className="!rounded-button whitespace-nowrap cursor-pointer flex-1 bg-white text-red-600 py-2 text-sm border border-red-300 rounded-md flex justify-center items-center hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
                         >
                           <i className="fas fa-times mr-2"></i> Reject
@@ -424,7 +409,7 @@ const WithdrawalRequests = () => {
                         className="!rounded-button whitespace-nowrap cursor-pointer flex-1 bg-gray-100 text-gray-600 py-2 text-sm rounded-md flex justify-center items-center"
                         disabled
                       >
-                        <i className="fas fa-check-circle mr-2"></i> Processed
+                        <i className="fas fa-check-circle mr-2"></i>{ request?.status?.toLocaleLowerCase()}
                       </button>
                     )}
                   </div>
@@ -434,6 +419,7 @@ const WithdrawalRequests = () => {
           )}
         </div>
       </div>
+
       {/* Accept Confirmation Modal */}
       {showAcceptModal && (
         <div className="fixed inset-0 z-50 overflow-y-auto">
@@ -465,14 +451,14 @@ const WithdrawalRequests = () => {
               <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                 <button
                   type="button"
-                  onClick={handleAcceptConfirm}
+                  onClick={() => {setPinDialog(true);setShowAcceptModal(false)}}
                   className="!rounded-button whitespace-nowrap w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm"
                 >
                   Confirm Acceptance
                 </button>
                 <button
                   type="button"
-                  onClick={handleAcceptCancel}
+                  onClick={() => {setShowAcceptModal(false)}}
                   className="!rounded-button whitespace-nowrap mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
                 >
                   Cancel
@@ -515,7 +501,7 @@ const WithdrawalRequests = () => {
                 <button
                   type="button"
                   onClick={() => {
-                    console.log("Accepting all requests");
+                    setPinDialog(true);
                     setShowAcceptAllModal(false);
                   }}
                   className="!rounded-button whitespace-nowrap w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm"
@@ -524,7 +510,7 @@ const WithdrawalRequests = () => {
                 </button>
                 <button
                   type="button"
-                  onClick={() => setShowAcceptAllModal(false)}
+                  onClick={() => {setShowAcceptAllModal(false)}}
                   className="!rounded-button whitespace-nowrap mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
                 >
                   Cancel
@@ -567,7 +553,7 @@ const WithdrawalRequests = () => {
                 <button
                   type="button"
                   onClick={() => {
-                    console.log("Rejecting all requests");
+                    setPinDialog(true);
                     setShowRejectAllModal(false);
                   }}
                   className="!rounded-button whitespace-nowrap w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
@@ -606,7 +592,7 @@ const WithdrawalRequests = () => {
                     <h3 className="text-lg leading-6 font-medium text-gray-900">
                       Confirm Rejection
                     </h3>
-                    <div className="mt-2">
+                    <div className="mt-2" >
                       <p className="text-sm text-gray-500">
                         Are you sure you want to reject this withdrawal request?
                       </p>
@@ -614,11 +600,15 @@ const WithdrawalRequests = () => {
                   </div>
                 </div>
               </div>
-              <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+              <div className="bg-gray-50 px-4 py-3 sm:px-6 ">
+                <textarea 
+                value={formData.reason}
+                onChange={(e) => setFormData({...formData,reason:e.target.value})}
+                 id="" className="border border-gray-300 rounded-md p-2  w-full" placeholder="Enter rejection reason...max 200 characters"></textarea>
                 <button
                   type="button"
-                  onClick={handleRejectConfirm}
-                  className="!rounded-button whitespace-nowrap w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
+                  onClick={() => {setPinDialog(true);setShowRejectModal(false)}}
+                  className="!rounded-button whitespace-nowrap w-full inline-flex justify-center mb-2 rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
                 >
                   Confirm Rejection
                 </button>

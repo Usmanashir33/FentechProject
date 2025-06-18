@@ -1,23 +1,32 @@
 // The exported code uses Tailwind CSS. Install Tailwind CSS in your dev environment to ensure all styles work.
 import { CopyIcon, Edit3, RemoveFormatting, SidebarClose } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
+import { authContext } from "../customContexts/AuthContext";
+import { uiContext } from "../customContexts/UiContext";
+import config from "../customHooks/ConfigDetails";
+
 const Profile = () => {
   const [isEditingBank, setIsEditingBank] = useState(false);
   const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const {currentUser}  = useContext(authContext);
+  const {copyToClipboard}  = useContext(uiContext);
   const [bankName, setBankName] = useState("Chase Bank");
   const [accountNumber, setAccountNumber] = useState("****4567");
   const [userName, setUserName] = useState("John Anderson");
   const [email, setEmail] = useState("john.anderson@example.com");
   const [phone, setPhone] = useState("+1 (555) 123-4567");
+  const [userInfoForm,setUserInfoForm] = useState({
+    first_name: currentUser?.first_name || "",
+    last_name: currentUser?.last_name || "",
+    username: currentUser?.username || "",
+    email: currentUser?.email || "",
+    phone: currentUser?.phone_number|| "",
+    address: "123 Dandinshe Dala local Government kano state Nigeria",
+  });
   const [address, setAddress] = useState(
     "123 Financial St, New York, NY 10001",
   );
   const [loading, setLoading] = useState(false);
-  const [notification, setNotification] = useState({
-    show: false,
-    message: "",
-    type: "success",
-  });
   // Time-based greeting
   const [greeting, setGreeting] = useState("");
   useEffect(() => {
@@ -31,7 +40,6 @@ const Profile = () => {
     setTimeout(() => {
       setLoading(false);
       setIsEditingProfile(false);
-      showNotification("Profile updated successfully!", "success");
     }, 1000);
   };
   const handleSaveBank = () => {
@@ -39,14 +47,7 @@ const Profile = () => {
     setTimeout(() => {
       setLoading(false);
       setIsEditingBank(false);
-      showNotification("Bank details updated successfully!", "success");
     }, 1000);
-  };
-  const showNotification = (message ) => {
-    setNotification({ show: true, message, type });
-    setTimeout(() => {
-      setNotification({ show: false, message: "", type: "success" });
-    }, 3000);
   };
  
   return (
@@ -64,15 +65,14 @@ const Profile = () => {
             <div className="flex items-center">
             <div className="relative">
               <img
-                // src="https://readdy.ai/api/search-image?query=abstract%20financial%20background%20with%20geometric%20patterns%2C%20purple%20and%20blue%20gradient%2C%20digital%20finance%20concept%20art%2C%20modern%20minimal%20design%2C%20subtle%20texture%2C%20perfect%20for%20banking%20app%20background&width=400&height=200&seq=2&orientation=landscape"
-                src="https://readdy.ai/api/search-image?query=professional%20headshot%20of%20a%20middle%20aged%20man%20with%20glasses%20wearing%20business%20attire%20on%20a%20neutral%20background%2C%20high%20quality%20portrait%2C%20professional%20lighting%2C%20soft%20focus&width=80&height=80&seq=1&orientation=squarish"
+                src={`${config.BASE_URL}${currentUser?.picture}`}
                 alt="Profile"
                 className="w-16 h-16 rounded-full border-2 border-white object-cover object-top"
               />
               <div className="absolute bottom-0 right-0 w-4 h-4 bg-green-400 rounded-full border-2 border-white"></div>
             </div>
             <div className="ml-4">
-              <h2 className="text-xl font-bold">{userName}</h2>
+              <h2 className="text-xl font-bold">{currentUser?.first_name} {currentUser?.last_name}</h2>
               <p className="text-indigo-100">Premium Account</p>
             </div>
           </div>
@@ -131,30 +131,32 @@ const Profile = () => {
             </div>
           ) : (
             <>
-            <div className=" text-lg font-medium text-gray-800 mb-2 flex justify-between">
-               <span>Bank Details</span>
-               <CopyIcon className="hover:bg-gray-100 hover:py-2 p-1 rounded-sm"/>
+            <div className=" text-md font-medium text-gray-800 mb-2 flex justify-between">
+               <span>Deposite Bank Details</span>
+               <CopyIcon 
+               onClick={() => copyToClipboard(
+                ` Acc Number :  ${currentUser?.account?.accountnumbers[0]?.account_number || 'null'}
+                Bank Name : ${currentUser?.account?.accountnumbers[0]?.bank_name || 'null'}`
+                
+                ,'Account Details  Copied')}
+               className="hover:bg-gray-100 hover:py-2 p-1 rounded-sm"/>
                </div>
-              <div className="flex justify-between items-center mb-4">
+              <div className="flex justify-between items-center mb-1">
                 
                 <div>
                   <label className="text-sm text-gray-500">Bank Name</label>
-                  <p className="text-gray-800 font-medium">{bankName}</p>
+                  <p className="text-gray-800 font-medium">{currentUser?.account?.accountnumbers[0]?.bank_name}</p>
                 </div>
-                  <CopyIcon
-                    onClick={() => setIsEditingBank(true)}
-                    className="text-indigo-500 p-1 hover:text-indigo-400 transition-all duration-200 cursor-pointer"
-                  />
               </div>
-              <div className="flex justify-between items-center mb-4">
+              <div className="flex justify-between items-center mb-4 ">
                 <div>
                   <label className="text-sm text-gray-500">
                     Account Number
                   </label>
-                  <p className="text-gray-800 font-medium">{accountNumber}</p>
+                  <p className="text-gray-800 font-medium"> {currentUser?.account?.accountnumbers[0]?.account_number} </p>
                 </div>
                 <CopyIcon
-                    onClick={() => setIsEditingBank(true)}
+                    onClick={() => copyToClipboard(currentUser?.account?.accountnumbers[0]?.account_number || 'null','account number copied')}
                     className="text-indigo-500  p-1 text-sm hover:text-indigo-400 transition-all duration-200 cursor-pointer"
                   />
               </div>
@@ -181,7 +183,7 @@ const Profile = () => {
         <div className=" my-3 bg-white rounded-2xl shadow-md overflow-hidden transform transition-all duration-300 ease-in-out">
           <div
             className="p-4 bg-gray-50  flex justify-between items-center cursor-pointer"
-            onClick={() => setIsEditingProfile(!isEditingProfile)}
+            
           >
             <h3 className="text-lg font-medium text-indigo-800 ">
                   {isEditingProfile ? 
@@ -190,9 +192,9 @@ const Profile = () => {
                 ("Personal Information")}
             </h3>
                 {isEditingProfile ? 
-                (<SidebarClose className="text-indigo-700 w-5"/>)
+                (<SidebarClose className="text-indigo-700 w-5" onClick={() => setIsEditingProfile(!isEditingProfile)} />)
                 : 
-                (<Edit3 className="text-indigo-700 w-5"/>)}
+                (<Edit3 className="text-indigo-700 w-5" onClick={() => setIsEditingProfile(!isEditingProfile)} />)}
           </div>
 
              {/* Account Details */}
@@ -201,22 +203,22 @@ const Profile = () => {
             <div className="space-y-3">
               <div className="flex justify-between">
                 <p className="text-sm text-gray-600">Full Name</p>
-                <p className="text-sm font-medium text-gray-800">John Anderson</p>
+                <p className="text-sm font-medium text-gray-800">{currentUser?.first_name} {currentUser?.last_name}</p>
               </div>
               <div className="flex justify-between">
                 <p className="text-sm text-gray-600">Username</p>
-                <p className="text-sm font-medium text-gray-800">@johnanderson</p>
+                <p className="text-sm font-medium text-gray-800">@{currentUser?.username}</p>
               </div>
               <div className="flex justify-between">
                 <p className="text-sm text-gray-600">Email</p>
                 <p className="text-sm font-medium text-gray-800">
-                  john.anderson@gmail.com
+                  {currentUser?.email}
                 </p>
               </div>
               <div className="flex justify-between">
                 <p className="text-sm text-gray-600">Phone</p>
                 <p className="text-sm font-medium text-gray-800">
-                  +1 (555) 123-4567
+                  {currentUser?.phone_number || "Not provided"}
                 </p>
               </div>
               <div className="flex justify-between">
@@ -238,23 +240,38 @@ const Profile = () => {
             <div className="p-6 space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-600 mb-1">
-                  Full Name
+                  First Name
                 </label>
                 <input
                   type="text"
-                  value={userName}
-                  onChange={(e) => setUserName(e.target.value)}
+                  name="first_name"
+                  value={userInfoForm.first_name}
+                  onChange={(e) => setUserInfoForm({ ...userInfoForm, first_name: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
                 />
               </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-600 mb-1">
+                  Last Name
+                </label>
+                <input
+                  type="text"
+                  name="last_name"
+                  value={userInfoForm.last_name}
+                  onChange={(e) => setUserInfoForm({ ...userInfoForm, last_name: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+                />
+              </div>
+
               <div>
                 <label className="block text-sm font-medium text-gray-600 mb-1">
                   Email Address
                 </label>
                 <input
                   type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  name="email"
+                  value={userInfoForm.email}
+                  onChange={(e) => setUserInfoForm({ ...userInfoForm, email: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
                 />
               </div>
@@ -264,8 +281,9 @@ const Profile = () => {
                 </label>
                 <input
                   type="tel"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
+                  name="phone"
+                  value={userInfoForm.phone}
+                  onChange={(e) => setUserInfoForm({ ...userInfoForm, phone: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
                 />
               </div>
@@ -274,8 +292,9 @@ const Profile = () => {
                   Address
                 </label>
                 <textarea
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
+                  name="address"
+                  value={userInfoForm.address}
+                  onChange={(e) => setUserInfoForm({ ...userInfoForm, address: e.target.value })}
                   rows={2}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
                 ></textarea>
@@ -301,18 +320,6 @@ const Profile = () => {
             </div>
           )}
         </div>
-
-        {/* Notification Toast */}
-        {notification.show && (
-          <div
-            className={`fixed  bottom-4 left-1/2 transform -translate-x-1/2 px-6 py-3 rounded-lg shadow-lg text-white ${notification.type === "success" ? "bg-green-600" : "bg-red-600"} flex items-center animate-fade-in-up`}
-          >
-            <i
-              className={`fas ${notification.type === "success" ? "fa-check-circle" : "fa-exclamation-circle"} mr-2`}
-            ></i>
-            {notification.message}
-          </div>
-        )}
 
       </div>
     </div>

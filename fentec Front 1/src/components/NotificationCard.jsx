@@ -8,7 +8,7 @@ const NotificationCard = ({notification}) => {
 
     return ( 
     <div
-        className={`notification-card ${notification.type}`}
+        className={`notification-card ${notification.type}`} 
       >
         <div className="notification-icon">
           {notification.type === "success" && <FaCheckCircle />}

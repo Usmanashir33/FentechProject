@@ -1,8 +1,7 @@
 import './setBankDialog.css'
-import { useContext, useEffect, useRef, useState } from "react";
-import { FaCheckCircle, FaRemoveFormat, FaTimesCircle } from "react-icons/fa";
+import {useEffect, useRef, useState } from "react";
+import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 import useExRequest from '../customHooks/ExternalRequestHook';
-import { TbFlagCancel } from 'react-icons/tb';
 import { MdCancel } from 'react-icons/md';
 
 
@@ -11,7 +10,7 @@ const SetBankDialog = ({setDialog,toggleInsertPin,dialogAction = null}) => {
     const bottomRef = useRef(null)
     const [accountNumber, setAccountNumber] = useState("");
     const [selectedBank, setSelectedBank] = useState(null);
-    const [accountName, setAccountName] = useState("");
+    const [accountName, setAccountName] = useState(""); 
     const [isVerified, setIsVerified] = useState(null);
     const [bankSearch, setBankSearch] = useState("");
     const [errorAccount, setErrorAccount] = useState(false);

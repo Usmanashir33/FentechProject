@@ -12,7 +12,7 @@ const WithdrawalRequestsPage = () => {
     const {withdrawalRequests,setWithdrawalRequests} = useContext(liveContext);
     const [pinDialog,setPinDialog] = useState(false);
     const [activeTab, setActiveTab] = useState("Pending");
-    const Tabs = ["Pending", "Approved", "Cancelled"];
+    const Tabs = ["Pending", "Approved", "Cancelled"]; 
     const [dateFiltered,setDateFiltered] = useState([]);
     const {CalenderDisplayer, CalenderScreen,selectedDate} = useCalenderFilterer(withdrawalRequests,setDateFiltered);
     const [filteredWithdrawals,setFilteredWithdrawals] = useState([]);

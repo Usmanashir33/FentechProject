@@ -1,11 +1,15 @@
-// The exported code uses Tailwind CSS. Install Tailwind CSS in your dev environment to ensure all styles work.
-import React, { useState } from "react";
+import  { useContext, useState } from "react";
 import { EyeIcon, EyeOff, } from 'lucide-react';
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import AddMoneyModal from "./AddMoneyModal";
+import { authContext } from "../customContexts/AuthContext";
+import Transections from "./Transections";
+import { uiContext } from "../customContexts/UiContext";
 const Home = () => {
+  const navigate = useNavigate();
+  const {currentUser} = useContext(authContext);
+  const {formatNaira} = useContext(uiContext);
   const [showBalance, setShowBalance] = useState(true);
-  const [balance, setBalance] = useState(2458.0);
   const [showAddMoneyModal, setShowAddMoneyModal] = useState(false);
   const toggleBalance = () => {
     setShowBalance(!showBalance);
@@ -32,7 +36,7 @@ const Home = () => {
             </div>
             <h2 className="text-2xl font-bold mb-3">
               {showBalance
-                ? `$${balance.toLocaleString("en-US", { minimumFractionDigits: 2 })}`
+                ? `${formatNaira(currentUser?.account?.account_balance)}`
                 : "*******"}
             </h2>
             <div className="flex gap-3">
@@ -95,11 +99,16 @@ const Home = () => {
           <div className="mb-6">
             <div className="flex justify-between items-center mb-3">
               <h2 className="font-medium">Recent Transactions</h2>
-              <button className="text-blue-600 text-sm cursor-pointer">
+              <button className="text-blue-600 text-sm cursor-pointer" 
+                onClick={() => {navigate("/transections")}}
+              >
                 See All
               </button>
             </div>
             <div className="space-y-3">
+                <Transections isRecent={true}/>
+            </div>
+            <div className="space-y-3 bbd hidden  ">
               <div className="bg-white rounded-xl p-3 flex items-center shadow-sm">
                 <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-3">
                   <i className="fas fa-wifi text-blue-600"></i>

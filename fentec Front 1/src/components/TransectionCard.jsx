@@ -12,7 +12,7 @@ const TransectionCard = ({trx}) => {
         payment_type,trx_date} = trx
     const {getFormattedDate} = useContext(uiContext)
     const cdref = useRef(null);
-
+ 
     const checkStatus = (statu) => {
         let status = statu.toLowerCase()
         return  (status === 'success' || status === 'approved')? 't-completed' :

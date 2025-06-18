@@ -149,7 +149,7 @@ const WithdrawalPage = () => {
     let url = "/account/withdraw-money/";
     let data = {
       amount: amount,
-      payment_pin: payment_pin,
+      payment_pin: payment_pin, 
       account_number: selectedBank.account_number,
       account_name: selectedBank.account_name,
       bank_name: selectedBank.bank_name,
@@ -158,9 +158,7 @@ const WithdrawalPage = () => {
     sendTransectionRequest(url,"POST",data,getWithdrawalStatus,true)
   }
 
-  const grabBankData = (data) => {
-    setMyBanks(data?.accounts);
-  }
+  
 
   const dateSelected = (e) => {
       let range = new Date(e.target.value);
@@ -186,7 +184,11 @@ const WithdrawalPage = () => {
     useEffect(() => {
       sendRequest('/account/trxs/','GET','')
     },[])
+    const grabBankData = (data) => {
+    setMyBanks(data?.accounts);
+    // grab the bank is_default == true
 
+  }
   useEffect(() => {
     // tetch banks data
     const url = '/account/getting_withdrowal_acc/'
@@ -299,7 +301,7 @@ const WithdrawalPage = () => {
             insertPinAction={handledeletingAccountId}
       />}
       {confirmPaymentDialog &&  <ConfirmTransperDetails
-        togglePaymentPage ={toggleConfirmPaymentDialog} 
+        togglePaymentPage ={toggleConfirmPaymentDialog}  
         toggleInsertPin={toggleInsertPin3}
         paymentDetails={withdrawalDetails}/>}
       {showPopup && <div className="popup">{showPopup}</div>}

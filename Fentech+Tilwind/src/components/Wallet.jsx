@@ -1,15 +1,19 @@
-import React, { useState, useEffect } from "react";
+import  { useState, useEffect, useContext } from "react";
 import PinPasswordManger from "./PinPasswordManger";
+import {Copy } from 'lucide-react';
+
 import { useNavigate } from "react-router";
-import { ArrowDown } from "lucide-react";
 import AddMoneyModal from "./AddMoneyModal";
+import { authContext } from "../customContexts/AuthContext";
+import { uiContext } from "../customContexts/UiContext";
 const Wallet = () => {
+  const  {currentUser} =useContext(authContext);
+  const {formatNaira,copyToClipboard}  = useContext(uiContext)
   const [addMoney,setAddmoney] = useState(false);
   const navigate = useNavigate();
-  const [balance] = useState(12458.9);
   const [isVisible, setIsVisible] = useState(false);
+  const [pinMode, setPinMode] = useState("");
   const [showPinModal, setShowPinModal] = useState(false);
-  const [showRPinModal, setShowRPinModal] = useState(false);
   const [showBalance, setShowBalance] = useState(true);
 
   const toggleAddmoney = () => {
@@ -28,15 +32,10 @@ const Wallet = () => {
       <div
         className={` w-full bg-white shadow-sm transform transition-all duration-1000 ${isVisible ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"}`}
       >
-        {/* Header */}
-        <div className="flex items-center justify-between p-2  border-b ">
-          <h1 className="text-lg font-semibold text-gray-800">My Wallet</h1>
-        </div>
-
         {/* Wallet Card */}
-        <div className="p-4">
+        <div className="px-3">
           <div
-            className="rounded-xl p-4 text-white shadow-md transform transition-all duration-500 hover:scale-[1.02] hover:shadow-lg overflow-hidden relative"
+            className="rounded-xl  p-4 text-white shadow-md transform transition-all duration-500 hover:scale-[1.02] hover:shadow-lg overflow-hidden relative"
             style={{
               backgroundImage: `url('https://readdy.ai/api/search-image?query=Abstract%20financial%20technology%20background%20with%20gradient%20purple%20and%20blue%20colors%2C%20digital%20money%20concept%20with%20subtle%20geometric%20patterns%2C%20modern%20minimalist%20design%20for%20banking%20app&width=600&height=300&seq=1&orientation=landscape')`,
               backgroundSize: "cover",
@@ -50,7 +49,7 @@ const Wallet = () => {
                 <div className="flex items-center">
                   <h2 className="text-2xl font-bold">
                     {showBalance
-                      ? `$${balance.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+                      ? `${formatNaira(currentUser?.account?.account_balance)}`
                       : "******"}
                   </h2>
                   <button
@@ -76,12 +75,14 @@ const Wallet = () => {
                 </button>
               </div>
               <div className="mt-4 pt-3 border-t border-purple-400 border-opacity-30">
-                <p className="text-xs text-wite">Account Number</p>
-                <p className="text-sm font-medium">
-                  {showBalance ? "1234567890" : "*******"}
+                <p className="text-xs ">Account Number</p>
+                <p className="text-sm font-medium flex items-center gap-5">
+                  {currentUser?.account?.accountnumbers[0]?.account_number}
+                  <Copy onClick={() => copyToClipboard(currentUser?.account?.accountnumbers[0]?.account_number || 'null','account number copied')}
+                   className="w-4 h-4 text-gray-200 hover:text-white" />
                 </p>
                 <p className="text-xs text-white mt-1">
-                  Meadow • Savings Account
+                  {currentUser?.account?.accountnumbers[0]?.bank_name} • Savings Account
                 </p>
               </div>
             </div>
@@ -131,7 +132,7 @@ const Wallet = () => {
           <div className="">
             <div
               id="changePinButton"
-              onClick={() => setShowPinModal(true)}
+              onClick={() => {setPinMode("Change"),setShowPinModal(true)}}
               className="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg cursor-pointer transition-all duration-300 hover:shadow-sm transform hover:translate-x-1"
             >
               <div className="flex items-center">
@@ -144,21 +145,8 @@ const Wallet = () => {
               </div>
               <i className="fas fa-chevron-right text-gray-400"></i>
             </div>
-            
-            <div
-             className="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg cursor-pointer transition-all duration-300 hover:shadow-sm transform hover:translate-x-1">
-              <div className="flex items-center">
-                <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-gray-600 mr-3">
-                  <i className="fas fa-credit-card"></i>
-                </div>
-                <span className="text-sm font-medium text-gray-800">
-                  Manage Cards
-                </span>
-              </div>
-              <i className="fas fa-chevron-right text-gray-400"></i>
-            </div>
 
-            <div onClick={() => {setShowRPinModal(true)}}
+            <div onClick={() => {setPinMode("Reset"),setShowPinModal(true)}}
              className="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg cursor-pointer transition-all duration-300 hover:shadow-sm transform hover:translate-x-1">
               <div className="flex items-center">
                 <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-gray-600 mr-3">
@@ -170,15 +158,23 @@ const Wallet = () => {
               </div>
               <i className="fas fa-chevron-right text-gray-400"></i>
             </div>
+             <div
+             className="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg cursor-pointer transition-all duration-300 hover:shadow-sm transform hover:translate-x-1">
+              <div className="flex items-center">
+                <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-gray-600 mr-3">
+                  <i className="fas fa-credit-card"></i>
+                </div>
+                <span className="text-sm font-medium text-gray-800">
+                  Manage Cards
+                </span>
+              </div>
+              <i className="fas fa-chevron-right text-gray-400"></i>
+            </div>
           </div>
         </div>
       </div>
         {/* PIN Manage  Modal */}
-        {showPinModal && (
-        <PinPasswordManger closeModal={setShowPinModal} />)}
-        {showRPinModal && (
-        <PinPasswordManger mode="Reset" closeModal={setShowRPinModal} />)}
-        
+        {showPinModal && (<PinPasswordManger mode={pinMode} closeModal={setShowPinModal} />)}
         { addMoney &&  < AddMoneyModal toggleModal={toggleAddmoney}/>}
     </div>
   );

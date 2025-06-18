@@ -10,9 +10,7 @@ from.models import User, KYC
 
 def generate_verifed_email_otp() :
     code = random.randint(12345,98769)
-    # code_exit = User.objects.get(email_verification_code = code).exists()
     return  code 
-    # return  code if not code_exit else  generate_verifed_email_otp()
 
 class MiniUserSerializer(ModelSerializer):
     class Meta:
@@ -51,6 +49,12 @@ class UserSerializer(ModelSerializer):
     
     
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+#    {
+#     "email":"coinermk@gmail.com",
+#     "password":"1145Man11",
+#     "otp":"79033"
+
+#     }
     userOtp = None 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
@@ -63,23 +67,15 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     def get_token(cls, user):
         token = super().get_token(user)
         
+        user_data = UserSerializer(user).data
         if user.log_with_otp :
             if  user.email_verification_code == cls.userOtp :
-                generated_otp = generate_verifed_email_otp()
-                user.email_verification_code = generated_otp
                 # user.save()
                 # we will send confirm login email 
                 # send message here
-                 
-                return token
+                print(user_data)
+                return token,user_data
             else :
                 raise AuthenticationFailed('invalid otp')
         else :
-            return token
-    
-    
-    # @classmethod
-    # def get_current_user(cls, user):
-    #     current_user = UserSerializer(user)
-    #     return current_user.data
-    
+            return{token,user}

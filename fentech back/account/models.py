@@ -70,6 +70,7 @@ class WithdrawalAccount(models.Model):
     account_name = models.CharField(_("Account Name"), max_length=50,editable=False)
     bank_name = models.CharField(_("Account Bank"), max_length=50,editable=False)
     bank_code = models.CharField(_("Account Code"), max_length=50,editable=False)
+    is_default = models.BooleanField(_("is default"),default=False)
     date_created = models.DateTimeField(_("date_joined"),auto_now_add=True)
     
     class Meta:
@@ -81,7 +82,7 @@ class WithdrawalAccount(models.Model):
         return f"{self.account_number}"
 
 class MoneyTransaction(models.Model):
-    STATUS_CHOICES = [
+    STATUS_CHOICES = [ 
         ('Pending', 'Pending'),
         ('Successful', 'Successful'),
         ('Failed', 'Failed'),
@@ -135,9 +136,10 @@ class MoneyTransaction(models.Model):
     # product = models.CharField(max_length=100,blank=True)
     
     # for transfer 
-    approver = models.ForeignKey(User, on_delete=models.DO_NOTHING, related_name='approver',blank=True,null=True)
-    receiver = models.ForeignKey(User, on_delete=models.DO_NOTHING, related_name='Transfer_in',blank=True,null=True)
-    read_by_approver = models.BooleanField(_("read by approver"),default=False)
+    approver = models.ForeignKey(User, on_delete=models.DO_NOTHING, related_name='approvedtrx',blank=True,null=True)
+    receiver = models.ForeignKey(User, on_delete=models.DO_NOTHING, related_name='transfersin',blank=True,null=True)
+    read_by_approver = models.BooleanField(_("read by approver"),default=False) 
+    
     # api_provider = models.CharField(max_length=100,blank=True)
     # response_message = models.TextField(blank=True, null=True)
     class Meta:

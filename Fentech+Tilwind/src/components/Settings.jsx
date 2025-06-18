@@ -1,21 +1,24 @@
 // The exported code uses Tailwind CSS. Install Tailwind CSS in your dev environment to ensure all styles work.
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import { Link, useNavigate } from "react-router";
 import PinPasswordManger from "./PinPasswordManger";
+import { authContext } from "../customContexts/AuthContext";
+import config from "../customHooks/ConfigDetails";
 
 
 const Settings = () => {
-    const navigate = useNavigate();
-    const [showPassModal,setShowPassModal] = useState(false);;
-    const [showRPassModal,setShowRPassModal] = useState(false);
+  const navigate = useNavigate();
+  const {currentUser} = useContext(authContext);
+  const [passMode,setPassmode] = useState('')
+  const [showPassModal,setShowPassModal] = useState(false);;
+  const [showRPassModal,setShowRPassModal] = useState(false);
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(true);
   const [biometricEnabled, setBiometricEnabled] = useState(true);
-  const [pushNotificationsEnabled, setPushNotificationsEnabled] =
-    useState(true);
+  const [pushNotificationsEnabled, setPushNotificationsEnabled] =useState(true);
   const [emailAlertsEnabled, setEmailAlertsEnabled] = useState(true);
   const [selectedLanguage, setSelectedLanguage] = useState("English");
   const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
-  const languageDropdownRef = useRef<HTMLDivElement>(null);
+  const languageDropdownRef = useRef(null);
   const languages = [
     "English",
     "Spanish",
@@ -44,28 +47,21 @@ const Settings = () => {
   return (
     <div className="min-h-screen bg-gray-50 flex justify-center">
       <div className="w-full bg-white shadow-sm transition-all duration-300 hover:shadow-md">
-        <div className="p-4">
-          {/* Header */}
-          <div className="flex items-center mb-6">
-            <button onClick={() => {navigate(-1)}}
-            className="text-blue-600 flex items-center cursor-pointer transition-colors duration-200 hover:text-blue-700">
-              <i className="fas fa-chevron-left mr-2 transition-transform duration-200 hover:-translate-x-1"></i>
-              <span className="font-medium">Settings</span>
-            </button>
-          </div>
+        <div className="p-4 ">
+         
           {/* Profile Section */}
-          <div className="flex items-center mb-6 transform transition-all duration-300 hover:scale-[1.02]">
-            <div className="w-14 h-14 rounded-full overflow-hidden mr-4 border-2 border-transparent hover:border-blue-400 transition-all duration-300">
+          <div className=" p-1 border-b rounded-md flex items-center mb-2 transform transition-all duration-300 hover:scale-[1.02]">
+            <div className="w-16 h-16 rounded-full overflow-hidden mr-4 border-2 border-transparent hover:border-blue-400 transition-all duration-300">
               <img
-                src="https://readdy.ai/api/search-image?query=professional%20headshot%20portrait%20of%20a%20young%20professional%20man%20with%20short%20dark%20hair%20and%20friendly%20smile%20on%20neutral%20blue%20background%2C%20high%20quality%2C%20realistic%2C%20professional%20photography&width=100&height=100&seq=1&orientation=squarish"
+                src={`${config.BASE_URL}${currentUser?.picture}`}
                 alt="Profile"
                 className="w-full h-full object-cover object-top transition-transform duration-500 hover:scale-110"
               />
             </div>
             <div className="flex-1">
-              <h2 className="font-semibold text-gray-800">Usman Ashir Muhammad</h2>
-              <p className="text-gray-500 text-sm">@coinermk</p>
-              <p className="text-gray-500 text-sm">coinermk@gmail.com</p>
+              <h2 className="font-semibold text-gray-800">{`${currentUser?.first_name} ${currentUser?.last_name}`}</h2>
+              <p className="text-gray-500 text-sm">{`@${currentUser?.username}`}</p>
+              <p className="text-gray-500 text-sm">{`${currentUser?.email}`}</p>
             </div>
             <button className="text-blue-500 cursor-pointer transition-all duration-200 hover:text-blue-600 hover:scale-110">
               <i className="fas fa-user-edit"></i>
@@ -78,7 +74,7 @@ const Settings = () => {
 
               <div
                 className="flex items-center justify-between p-3 border-b border-gray-100 transition-colors duration-200 hover:bg-gray-50 cursor-pointer"
-                onClick={() => {setShowPassModal(true)}}
+                onClick={() => {setPassmode('Change'),setShowPassModal(true)}}
               >
                 <div className="flex items-center">
                   <i className="fas fa-lock text-gray-400 mr-3 transition-all duration-200 group-hover:text-blue-500"></i>
@@ -88,7 +84,7 @@ const Settings = () => {
               </div>
               <div
                 className="flex items-center justify-between p-3 border-b border-gray-100 transition-colors duration-200 hover:bg-gray-50 cursor-pointer"
-                onClick={() => {setShowRPassModal(true)}}
+                onClick={() => {setPassmode("Reset"),setShowPassModal(true)}}
               >
                 <div className="flex items-center">
                   <i className="fas fa-key text-gray-400 mr-3 transition-all duration-200 group-hover:text-blue-500"></i>
@@ -317,9 +313,7 @@ const Settings = () => {
         </div>
          {/* PIN Manage  Modal */}
         {showPassModal && (
-        <PinPasswordManger name="Password" closeModal={setShowPassModal} />)}
-        {showRPassModal && (
-        <PinPasswordManger name="Password" mode="Reset" closeModal={setShowRPassModal} />)}
+        <PinPasswordManger name="Password" mode={passMode} closeModal={setShowPassModal} />)}
       </div>
       <style jsx>{`
 @keyframes fadeIn {

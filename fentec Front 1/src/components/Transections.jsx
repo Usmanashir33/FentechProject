@@ -15,7 +15,7 @@ const Transactions = () => {
     
     const nextPageRef = useRef(null);
     const transectionsRef = useRef(null);
-    const refetchRef = useRef(null);
+    const refetchRef = useRef(null); 
 
     useEffect(() => {
         if (transections){
@@ -102,7 +102,7 @@ const Transactions = () => {
     },[])
     return ( 
         <div className="transection-section ">
-                            <div className="transection-header">
+                            <div className="transection-header ">
                                 <div className="flex justify-end">
                                     <div className="transection-name">
                                         <span>Transections</span>

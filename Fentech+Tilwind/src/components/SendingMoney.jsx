@@ -1,36 +1,180 @@
 import { faMultiply } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {  ArrowLeft, CheckCircle,HandCoins,  } from "lucide-react";
-import { useState } from "react";
+import {  AlignCenter, ArrowLeft, CheckCircle,HandCoins,  } from "lucide-react";
+import { useContext, useEffect, useState } from "react";
 // import { useNavigation } from "react-router";
 import { useNavigate } from 'react-router-dom';
+import useSearchRequest from "../customHooks/SearchRequest";
+import { authContext } from "../customContexts/AuthContext";
+import { uiContext } from "../customContexts/UiContext";
+import config from "../customHooks/ConfigDetails";
+import ConfirmTrx from "./ConfirmTrx";
+import Pins from "./PinsPage";
+import useSendTransection from "../customHooks/SendTransection";
+import TrxStatus from "./TrxStatus";
+import { liveContext } from "../customContexts/LiveContext";
 
 const SendingMoney = () => {
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+    const {sendSearchRequest} = useSearchRequest();
+  const {sendTransectionRequest} = useSendTransection();
+
+    const {currentUser,setCurrentUser} = useContext(authContext);
+    const {setTransections} = useContext(liveContext);
+    const {setError} = useContext(uiContext);
+    const [showPins,setShowPins]= useState(false);
+    const [showTrxStatus,setShowTrxStatus]= useState(false);
+    const [showConfirm,setShowConfirm]= useState(false);
+    const [confirmedDetails,setConfirmedDetails] = useState({})
+
+    const [formData, setFormData] = useState({
+      validRecipient: false,
+      receiver: {},
+      transMode : '',
+      amount: "",
+      note: "",
+  });
+    const togglePins = () => {
+      setShowPins(!showPins)
+    }
+    const toggleConfirm = () => {
+      setShowConfirm(!showConfirm);
+    }
+    const toggleTrxStatus = () => {
+      setShowTrxStatus(!showTrxStatus);
+    }
     const [showReceipients,setShowReciepient ] = useState(false)
-    const [receiver,setReceiver] = useState({})
+    const [recipients,setrecipients] = useState([])
+    const [receiver,setReceiver] = useState('');
     const [transMode,setTransMode] = useState('sending')
     const toggleShowrecipients = () => {
         setShowReciepient(!showReceipients)
     }
+    const grabResentRecipients = (data) => {
+      setrecipients(data?.data)
+    }
+    const fetchRecentRecipients = () => {
+      if (!showReceipients){
+        const url = "/account/recent_recipients/"
+        sendSearchRequest(url,"GET",'',grabResentRecipients,)
+      }
+    }
     const selectReceipient = (parson) => {
         setReceiver(parson)
+        setFormData((prev) => ({
+          ...prev,receiver:parson,validRecipient:true
+        }))
         toggleShowrecipients()
     }
+    const getPaymentStatus = (data) => {
+    if (data.success){
+      const {trx,user} = data.data;
+      setCurrentUser(user);
+      setConfirmedDetails((prev) => ({
+        "Status" : trx?.status,
+        "Amount" : trx?.amount,
+        "Recipient" : formData.receiver?.username,
+        "Date & Time " : trx?.trx_date,
+        "Trx Id " : trx?.id,
+      }))
+      toggleTrxStatus();
+      toggleConfirm();  // close the windows 
+      togglePins(); // close the windows 
+      // setTransections([trx,...transections]);
+      setTransections((prev) =>({
+          prev,
+          results: [trx, ...prev?.results]
+        }))
+    }
+  }
+  const initiatePayment = (payment_pins) => {
+    let url = "/account/send-money/";
+    let data = {
+      amount: formData.amount,
+      note: formData.note, 
+      recipient: formData?.receiver?.id,
+      payment_pin: payment_pins,
+    };
+    sendTransectionRequest(url,"POST",data,getPaymentStatus,true)
+  }
+    const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!formData?.validRecipient){
+      setError('Invalid Recipient')
+      return
+    }
+    if (Number(formData?.amount) > Number(currentUser.account.account_balance)){
+      setError('Insufficient Balance !')
+      return
+    }
+    if (formData?.receiver.id === currentUser.id){
+      setError('You can not make transfer to your self!')
+      return
+    }
+    setConfirmedDetails((prev) => ({
+      "Recipient Username" : formData.receiver?.username,
+      "Recipient Email" : formData.receiver?.email,
+      "Amount" : formData?.amount,
+      "Note" : formData?.note,
+    }))
+    toggleConfirm();
+  };
+  
+  const checkValidRecipient = (data) => {
+    if (data.error){ 
+      setFormData((prev) => ({
+        ...prev,validRecipient:false,receiver:{}
+      }) )
+    } else {
+      setFormData((prev) => ({
+        ...prev,validRecipient:true,receiver:data
+      }) )
+    }
+  }
+
+  useEffect(() => {
+    if (receiver.length >= 5){
+      let search = receiver
+      const url = "/authuser/search-user/"
+      sendSearchRequest(url,"POST",{search},checkValidRecipient)
+    }else if (receiver.length < 5){
+      setFormData((prev) => ({
+        ...prev,validRecipient:false,receiver:{}
+      }) )
+    }
+  },[receiver])
     return ( 
-         <div className=" ">
+         <div className=" relative ">
           {/* Make a Transaction */}
-          <div className="bg-white rounded-md shadow-md  px-4 py-2 ">
-            <div className="flex justify-between items-center mb-2 border-b">
+          {(showConfirm || showPins || showTrxStatus) && <div className={`w-full  h-full  absolute z-10 transition-all duration-500 ease-in-out transform ${
+          (showPins || showConfirm || showTrxStatus)
+            ? "opacity-100 scale-100 translate-y-0"
+            : "opacity-0 scale-95 -translate-y-4 "
+            } bg-white shadow-lg `}>
+            {showConfirm && <ConfirmTrx 
+              close={toggleConfirm}
+              confirmWithpins={togglePins}
+              trxDetails={confirmedDetails}
+              mode={transMode==='sending'? "Transfer":"Request"}
+            />}
+            {showPins && <Pins 
+              close={togglePins}
+              triggerFunc={initiatePayment}
+            />}
+            {showTrxStatus && <TrxStatus 
+              close={toggleTrxStatus}
+              trxDetails={confirmedDetails}
+            />}
+          </div>}
+          <div className="  bg-white relative  rounded-md shadow-md  px-4 py-2 ">
+            <div className="absolute top-0  flex justify-between items-center ">
                 <ArrowLeft
-                onClick={() => navigate(-1)}
+                  onClick={() => navigate(-1)}
                  className="text-xl mb-4  hover:text-yellow-600 transition-colors duration-200"
                 />
-                <h3 className="text-lg font-medium text-gray-800 mb-4">
-                Make a Transaction
-                </h3>
+                
             </div>
-            <div className="flex space-x-2 mb-4">
+            <div className="flex space-x-2 mb-3  mt-5 ">
               <button
                 onClick={() => setTransMode('sending')}
                className={`flex-1 ${transMode=== 'sending'? "bg-indigo-600 text-white ":'bg-gray-100 text-gray-800'} py-2 px-4 rounded-lg !rounded-button whitespace-nowrap`}>
@@ -46,15 +190,24 @@ const SendingMoney = () => {
             <form className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-600 mb-1">
-                  <span className="flex items-center gap-2">
-                    {Object.keys(receiver).length > 0   && <CheckCircle className="w-4 h-4 text-green-600" />}
-                    <span>Recipient</span>
+                  <span className="flex items-center gap-2  ">
+                    {formData.validRecipient   &&
+                    <div className="flex items-center gap-2 ">
+                      <CheckCircle className="w-4 h-4 text-green-600" />
+                      <span>Recipient</span>
+                      {formData?.receiver?.username && <span className="text-green-600">{`(${formData?.receiver?.username})`} </span>}
+                    </div>
+                     }
+                    
                   </span>
+                  {!formData.validRecipient && <span>Recipient</span>}
                 </label>
                 <div className="relative">
                   <input
-                  value={receiver.name}
+                  value={receiver?.username }
+                  onChange={(e) => {setReceiver(e.target.value)}}
                     type="text"
+                    required
                     placeholder="Search by name or username"
                     className="w-full px-4 py-2 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm pr-32 bg-gray-50"
                   />
@@ -63,7 +216,10 @@ const SendingMoney = () => {
                   <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex space-x-2">
                     {/* <Users2/> */}
                     <button type="button"
-                    onClick={toggleShowrecipients}
+                    onClick={() => {
+                      fetchRecentRecipients(); 
+                      toggleShowrecipients();
+                    }}
                      className=" text-blue-400 hover:text-indigo-600 transition-colors duration-200">
                       <i className="fas fa-users"></i>
                     </button>
@@ -84,66 +240,34 @@ const SendingMoney = () => {
                     </span>
                   </div>
                   <div className="divide-y divide-gray-100  overflow-y-auto h-50">
-                    <div
-                        onClick={() => {
-                            selectReceipient({
-                                name:'usman'
-                            })
-                        }}
-                     className="p-3 flex items-center justify-between hover:bg-gray-50 cursor-pointer transition-colors duration-200">
-                      <div className="flex items-center space-x-3">
-                        <img
-                          src="https://readdy.ai/api/search-image?query=professional%20headshot%20of%20a%20young%20Nigerian%20businessman%20in%20formal%20attire%2C%20high%20quality%20portrait&width=40&height=40&seq=3&orientation=squarish"
-                          alt="User"
-                          className="w-10 h-10 rounded-full object-cover"
-                        />
-                        <div>
-                          <p className="text-sm font-medium text-gray-800">
-                            Oluwaseun Adebayo
-                          </p>
-                          <p className="text-xs text-gray-500">@seun_adebayo</p>
+                    {recipients && recipients.map((parson,index) => 
+                      <div
+                      key={`${index}${parson.id}`}
+                          onClick={() => {
+                              selectReceipient(parson)
+                          }}
+                      className="p-3 flex items-center justify-between hover:bg-gray-50 cursor-pointer transition-colors duration-200">
+                        <div className="flex items-center space-x-3">
+                          <img
+                          src = {`${config.BASE_URL}${parson.picture}`}
+                            alt="User"
+                            className="w-10 h-10 rounded-full object-cover border"
+                          />
+                          <div>
+                            <p className="text-sm font-medium text-gray-800">
+                              {parson.first_name} {parson.last_name}
+                            </p>
+                            <p className="text-xs text-gray-500">@{parson.username}</p>
+                          </div>
                         </div>
+                        <span className="text-xs text-gray-500">
+                          Last sent: 2 days ago
+                        </span>
                       </div>
-                      <span className="text-xs text-gray-500">
-                        Last sent: 2 days ago
-                      </span>
-                    </div>
-                    <div className="p-3 flex items-center justify-between hover:bg-gray-50 cursor-pointer transition-colors duration-200">
-                      <div className="flex items-center space-x-3">
-                        <img
-                          src="https://readdy.ai/api/search-image?query=professional%20headshot%20of%20a%20young%20Nigerian%20businesswoman%20with%20natural%20hair%20in%20corporate%20attire%2C%20high%20quality%20portrait&width=40&height=40&seq=4&orientation=squarish"
-                          alt="User"
-                          className="w-10 h-10 rounded-full object-cover"
-                        />
-                        <div>
-                          <p className="text-sm font-medium text-gray-800">
-                            Chioma Okonkwo
-                          </p>
-                          <p className="text-xs text-gray-500">@chioma_ok</p>
-                        </div>
-                      </div>
-                      <span className="text-xs text-gray-500">
-                        Last sent: 5 days ago
-                      </span>
-                    </div>
-                    <div className="p-3 flex items-center justify-between hover:bg-gray-50 cursor-pointer transition-colors duration-200">
-                      <div className="flex items-center space-x-3">
-                        <img
-                          src="https://readdy.ai/api/search-image?query=professional%20headshot%20of%20a%20middle%20aged%20Nigerian%20man%20in%20traditional%20attire%2C%20high%20quality%20portrait&width=40&height=40&seq=5&orientation=squarish"
-                          alt="User"
-                          className="w-10 h-10 rounded-full object-cover"
-                        />
-                        <div>
-                          <p className="text-sm font-medium text-gray-800">
-                            Babatunde Olatunji
-                          </p>
-                          <p className="text-xs text-gray-500">@baba_t</p>
-                        </div>
-                      </div>
-                      <span className="text-xs text-gray-500">
-                        Last sent: 1 week ago
-                      </span>
-                    </div>
+                    )}
+                    {!recipients && <div className="flex text-gray-900 opacity-10">
+                      No data recorded
+                    </div>}
                   </div>
                 </div>}
 
@@ -157,7 +281,14 @@ const SendingMoney = () => {
                     ₦
                   </span>
                   <input
+                  value={formData?.amount}
+                  onChange={(e) => {
+                    setFormData((prev) => ({
+                      ...prev,amount:e.target.value
+                    }))
+                  }}
                     type="number"
+                    required
                     placeholder="0.00"
                     className="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm bg-gray-50"
                   />
@@ -172,6 +303,12 @@ const SendingMoney = () => {
                 </label>
                 <div className="relative">
                   <textarea
+                  value={formData?.note}
+                  onChange={(e) => {
+                    setFormData((prev) => ({
+                      ...prev,note:e.target.value
+                    }))
+                  }}
                     placeholder="Add a note about this transaction"
                     rows={3}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm bg-gray-50 pr-10"
@@ -183,17 +320,21 @@ const SendingMoney = () => {
                 </p>
               </div>
               <button
-                type="submit"
+                type="button"
                 className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-lg transition-all duration-200 flex items-center justify-center space-x-2 !rounded-button whitespace-nowrap"
               >
                 {transMode === 'sending' ?
-                    (<div>
+                    (<div onClick={(e) => {
+                      handleSubmit(e)
+                    }}>
                          <i className="fas fa-paper-plane"></i>
                         <span>Send Money</span>
                     </div>)
                 :
 
-                (<div className="flex ">
+                (<div className="flex " onClick={(e) => {
+                  handleSubmit(e)
+                }}>
                     < HandCoins/>
                     <span>Request Money</span>
                 </div>)

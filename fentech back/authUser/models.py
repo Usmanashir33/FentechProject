@@ -51,6 +51,7 @@ class User(AbstractUser):
     lock_password = models.CharField(_("locking password"), max_length=6,blank=True)
     email_verification_code = models.CharField(_("email_verification_code"), max_length=6,blank=True)
     payment_pin = models.CharField(_("Payment Pin"), max_length=4,blank=True)
+    payment_pin_set = models.BooleanField(_("Payment Pin Set"),default=False)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default= False)
     is_active = models.BooleanField(_("active account"),default=False)

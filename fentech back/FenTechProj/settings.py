@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-m)-^f(0%i(w1_j3@slrgx7e2w&)il*^if#st05g0t+#zb2b96o
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1','localhost','45fc-102-91-105-163.ngrok-free.app']
+ALLOWED_HOSTS = ['127.0.0.1','localhost','192.168.203.26','192.168.18.18','197.210.53.209','197.210.53.209:5173']
 
 # Application definition
 INSTALLED_APPS = [
@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     # dependancy apps 
     "corsheaders",
     'rest_framework',
-    'rest_framework_simplejwt',
+    'rest_framework_simplejwt', 
     # 'channels', 
     
     # custom apps 
@@ -88,18 +88,18 @@ SIMPLE_JWT = {
 
 
 CORS_ALLOWED_ORIGINS = [
-    "https://example.com",
-    "https://sub.example.com",
-    "http://localhost:8080",
-    "http://127.0.0.1:9000",
+    "http://192.168.203.26:5173",
+    "http://197.210.53.209:5173",
     'http://localhost:5173',
-    'https://45fc-102-91-105-163.ngrok-free.app',
 ]
 CORS_ALLOWED_ORIGIN_ALL = True
 
 CSRF_TRUSTED_ORIGINS = [
-   'https://45fc-102-91-105-163.ngrok-free.app',  # Replace with your ngrok URL
+   'http://192.168.203.26:5173',  # Replace with your ngrok URL
+   'http://197.210.53.209:5173',  # Replace with your ngrok URL
+   'http://192.168.18.18',  # Replace with your ngrok URL
 ]
+ALLOWED_HOSTS = ['*']  # for dev only; replace with your LAN IP or domain in prod
 
 
 TEMPLATES = [

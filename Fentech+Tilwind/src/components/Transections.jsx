@@ -1,7 +1,14 @@
-import { EyeClosed, EyeOff, LucideEyeClosed } from "lucide-react";
-import { useState } from "react";
+import {LucideEyeClosed } from "lucide-react";
+import { useContext, useEffect, useRef, useState } from "react";
+import { liveContext } from "../customContexts/LiveContext";
+import TrxCard from "./TrxCard";
 
-const Transections = ({title=''}) => {
+
+const Transections = ({title='',isRecent=false}) => {
+    const {transections,sendRequest} = useContext(liveContext);
+    const [filteredTrxs,setFilteredTrxs] = useState([]);
+    const transectionsRef = useRef(null);
+
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [dateRange, setDateRange] = useState({ start: '', end: '' });
     const [transactionType, setTransactionType] = useState('');
@@ -30,9 +37,22 @@ const Transections = ({title=''}) => {
     const toggleFilter = () => {
         setIsFilterOpen(!isFilterOpen);
     };
+    useEffect(() => {
+       if (transections){
+        if (isRecent){
+          return (setFilteredTrxs(transections?.results.slice(0,3)))
+        }
+        setFilteredTrxs(transections?.results)
+        }
+    },[transections,isRecent])
+    useEffect(() => {
+        if (!transections?.results.length){
+            sendRequest('/account/trxs/','GET','',)
+        }
+    },[])
     return ( 
- <div className="bg-white rounded-lg shadow-sm pb-6">
-              <div className=" sticky top-0 px-4 py-5 border-b  z-20 bg-white">
+        <div className="bg-white rounded-lg shadow-sm pb-1">
+              {!isRecent && <div className=" sticky top-0 px-4 py-5 border-b  z-20 bg-white">
                 <div className="flex items-center justify-between">
                   {title && <h3 className="text-lg font-medium text-gray-900">{title}</h3>}
                   <div className="flex items-center space-x-4">
@@ -192,152 +212,21 @@ const Transections = ({title=''}) => {
                     </div>
                   </div>
                 </div>
+              </div>}
+              {/* <!-- transection cards  --> */}
+              <div ref={transectionsRef} className=" ">
+                  {filteredTrxs?.length > 0 ? (
+                      filteredTrxs.map((trx,index) => (
+                       <TrxCard trx ={trx} key={trx.id}/>
+                      ))
+                    ) : (
+                      <div className="flex w-full justify-center items-center font-medium text-gray-500 mt-5">
+                        <p>No Transection Found Yet!</p>
+                      </div>
+                  )}
+                  {/* <div className="end" ref={nextPageRef} onClick={() => {''}}>---The End----</div> */}
               </div>
-              {/* transections  */}
-              <div className="p-2 grid grid-cols-1 gap-4">
-                {/* Money In Transaction */}
-                <div className="flex items-center justify-between p-2 bg-gray-50 rounded-lg cursor-pointer transform transition-all duration-300 hover:bg-white hover:shadow-lg hover:scale-[1.02] active:scale-[0.98]">
-                  <div className="flex items-center space-x-4 w-full">
-                    <div className="h-12 w-12 rounded-full bg-green-100 flex items-center justify-center transition-all duration-300 group-hover:scale-110">
-                      <i className="fas fa-arrow-down text-green-500 text-lg"></i>
-                    </div>
-                    <div>
-                      <div className="text-sm font-medium text-gray-900">Money In</div>
-                      <div className="flex items-center space-x-2 mt-1">
-                        <span className="text-xs text-gray-500">From: John Smith</span>
-                        <span className="text-xs text-gray-400">•</span>
-                        <span className="text-xs text-gray-500">May 27, 2025</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-sm font-semibold text-green-600">+$500.00</div>
-                    <span className="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Success</span>
-                  </div>
-                </div>
-                {/* Deposit Transaction */}
-                <div className="flex items-center justify-between p-2 bg-gray-50 rounded-lg cursor-pointer transform transition-all duration-300 hover:bg-white hover:shadow-lg hover:scale-[1.02] active:scale-[0.98]">
-                  <div className="flex items-center space-x-4">
-                    <div className="h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center">
-                      <i className="fas fa-piggy-bank text-blue-500 text-lg"></i>
-                    </div>
-                    <div>
-                      <div className="text-sm font-medium text-gray-900">Bank Deposit</div>
-                      <div className="flex items-center space-x-2 mt-1">
-                        <span className="text-xs text-gray-500">To: Savings Account</span>
-                        <span className="text-xs text-gray-400">•</span>
-                        <span className="text-xs text-gray-500">May 27, 2025</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-sm font-semibold text-blue-600">+$1,000.00</div>
-                    <span className="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">Pending</span>
-                  </div>
-                </div>
-                {/* Withdrawal Transaction */}
-                <div className="flex items-center justify-between p-2 bg-gray-50 rounded-lg cursor-pointer transform transition-all duration-300 hover:bg-white hover:shadow-lg hover:scale-[1.02] active:scale-[0.98]">
-                  <div className="flex items-center space-x-4">
-                    <div className="h-12 w-12 rounded-full bg-red-100 flex items-center justify-center">
-                      <i className="fas fa-arrow-up text-red-500 text-lg"></i>
-                    </div>
-                    <div>
-                      <div className="text-sm font-medium text-gray-900">Withdrawal</div>
-                      <div className="flex items-center space-x-2 mt-1">
-                        <span className="text-xs text-gray-500">ATM Withdrawal</span>
-                        <span className="text-xs text-gray-400">•</span>
-                        <span className="text-xs text-gray-500">May 26, 2025</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-sm font-semibold text-red-600">-$200.00</div>
-                    <span className="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Success</span>
-                  </div>
-                </div>
 
-                {/* Airtime Purchase */}
-                <div className="flex items-center justify-between p-2 bg-gray-50 rounded-lg cursor-pointer transform transition-all duration-300 hover:bg-white hover:shadow-lg hover:scale-[1.02] active:scale-[0.98]">
-                  <div className="flex items-center space-x-4">
-                    <div className="h-12 w-12 rounded-full bg-purple-100 flex items-center justify-center">
-                      <i className="fas fa-phone text-purple-500 text-lg"></i>
-                    </div>
-                    <div>
-                      <div className="text-sm font-medium text-gray-900">Airtime Purchase</div>
-                      <div className="flex items-center space-x-2 mt-1">
-                        <span className="text-xs text-gray-500">Phone: +1234567890</span>
-                        <span className="text-xs text-gray-400">•</span>
-                        <span className="text-xs text-gray-500">May 26, 2025</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-sm font-semibold text-red-600">-$20.00</div>
-                    <span className="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Failed</span>
-                  </div>
-                </div>
-                {/* Airtime Purchase */}
-                <div className="flex items-center justify-between p-2 bg-gray-50 rounded-lg cursor-pointer transform transition-all duration-300 hover:bg-white hover:shadow-lg hover:scale-[1.02] active:scale-[0.98]">
-                  <div className="flex items-center space-x-4">
-                    <div className="h-12 w-12 rounded-full bg-purple-100 flex items-center justify-center">
-                      <i className="fas fa-phone text-purple-500 text-lg"></i>
-                    </div>
-                    <div>
-                      <div className="text-sm font-medium text-gray-900">Airtime Purchase</div>
-                      <div className="flex items-center space-x-2 mt-1">
-                        <span className="text-xs text-gray-500">Phone: +1234567890</span>
-                        <span className="text-xs text-gray-400">•</span>
-                        <span className="text-xs text-gray-500">May 26, 2025</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-sm font-semibold text-red-600">-$20.00</div>
-                    <span className="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Failed</span>
-                  </div>
-                </div>
-                {/* Airtime Purchase */}
-                <div className="flex items-center justify-between p-2 bg-gray-50 rounded-lg cursor-pointer transform transition-all duration-300 hover:bg-white hover:shadow-lg hover:scale-[1.02] active:scale-[0.98]">
-                  <div className="flex items-center space-x-4">
-                    <div className="h-12 w-12 rounded-full bg-purple-100 flex items-center justify-center">
-                      <i className="fas fa-phone text-purple-500 text-lg"></i>
-                    </div>
-                    <div>
-                      <div className="text-sm font-medium text-gray-900">Airtime Purchase</div>
-                      <div className="flex items-center space-x-2 mt-1">
-                        <span className="text-xs text-gray-500">Phone: +1234567890</span>
-                        <span className="text-xs text-gray-400">•</span>
-                        <span className="text-xs text-gray-500">May 26, 2025</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-sm font-semibold text-red-600">-$20.00</div>
-                    <span className="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Failed</span>
-                  </div>
-                </div>
-
-                {/* Data Purchase */}
-                <div className="flex items-center justify-between p-2 bg-gray-50 rounded-lg cursor-pointer transform transition-all duration-300 hover:bg-white hover:shadow-lg hover:scale-[1.02] active:scale-[0.98]">
-                  <div className="flex items-center space-x-4">
-                    <div className="h-12 w-12 rounded-full bg-indigo-100 flex items-center justify-center">
-                      <i className="fas fa-wifi text-indigo-500 text-lg"></i>
-                    </div>
-                    <div>
-                      <div className="text-sm font-medium text-gray-900">Data Purchase</div>
-                      <div className="flex items-center space-x-2 mt-1">
-                        <span className="text-xs text-gray-500">5GB Data Plan</span>
-                        <span className="text-xs text-gray-400">•</span>
-                        <span className="text-xs text-gray-500">May 25, 2025</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-sm font-semibold text-red-600">-$30.00</div>
-                    <span className="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Success</span>
-                  </div>
-                </div>
-              </div>
             </div>
     );
 }

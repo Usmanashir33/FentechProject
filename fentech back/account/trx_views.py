@@ -2,13 +2,14 @@ import os ,random,re
 import requests
 from decouple import config
 from core.c_pegination import CustomPagination   
+from django.db.models import Q
 
 from authUser.serializers import UserSerializer
 from notifications.serializers import NotificationSerializer
 from notifications.models import Notification
 from account.websocketandmail import signal_sender
 from account.models import MoneyTransaction
-from .serializers import MoneyTransactionSerializer
+from .serializers import MoneyTransactionSerializer,MiniUserSerializer
 from rest_framework.views import APIView
 
 from rest_framework import permissions
@@ -148,6 +149,8 @@ def createInternalTrx (request,recipient):
         amount = f"{amount}",
         net_charges = 0.00,
         status = 'success',
+        # status = 'pending',
+        # status = 'failed',
         transaction_type = 'Transfer-Out',
         notes = request.data.get('note'),
         receiver = recipient
@@ -231,14 +234,14 @@ class SendMoneyView(APIView):
         
 class WithdrawalView(APIView):
     def post(self, request):
-        # try:
+        try:
             user = request.user
             amount = request.data.get('amount')
             
             # validate pin here
             pin = request.data.get('payment_pin')
             if user.payment_pin != pin :
-                return Response({"success":"wronge pin"}, status=status.HTTP_200_OK)
+                return Response({"error":"wronge pin"}, status=status.HTTP_200_OK)
             
             if user and float(user.account.account_balance) >= float((amount)) :
                 # debit and credit here 
@@ -249,8 +252,23 @@ class WithdrawalView(APIView):
                 return Response({"success":"success",'resp':user_data}, status=status.HTTP_200_OK)
             else:
                 return Response({"success":"not enough balance"}, status=status.HTTP_200_OK)
-        # except:
-            # return Response({"error":"server went wrong"}, status=status.HTTP_408_REQUEST_TIMEOUT)
+        except:
+            return Response({"error":"server went wrong"}, status=status.HTTP_408_REQUEST_TIMEOUT)
+
+class RecentReciepientsView(APIView):
+    def get(self, request):
+        try:
+            user = request.user 
+            recepients =User.objects.filter(
+                    Q(transfersin__status = 'success',transfersin__user =user ) & 
+                    ~Q(transfersin__receiver = user)
+                ).order_by("-transfersin__trx_date").distinct()
+            data = MiniUserSerializer(recepients,many=True).data
+            return Response({'success':'success','data':data},status=status.HTTP_200_OK)
+        except :
+           return Response({"error":"user not found"},status=status.HTTP_200_OK)
+
+
 class WithdrawalRequestView(APIView):
     def get(self, request):
         paginator = CustomPagination()
@@ -265,7 +283,7 @@ class WithdrawalRequestView(APIView):
             return Response({"error":"server went wrong"}, status=status.HTTP_408_REQUEST_TIMEOUT)
         
     def post(self, request,):
-        # try:
+        try:
             user = request.user
             trx_id = request.data.get('trx_id')
             approval = request.data.get('approval')
@@ -273,17 +291,17 @@ class WithdrawalRequestView(APIView):
             try :
                 trx = MoneyTransaction.objects.get(id = trx_id)
             except :
-                return Response({"success":"this trx is not found"}, status=status.HTTP_200_OK)
+                return Response({"error":"trx is not found"}, status=status.HTTP_200_OK)
             
             if str(user.payment_pin) != str(payment_pin) :
-                return Response({"success":"wronge pin"}, status=status.HTTP_200_OK)
+                return Response({"error":"wronge pin"}, status=status.HTTP_200_OK)
             # only admin can approve trx
             if user.is_superuser == False:
-                return Response({"success":"you are not allowed to process this trx"}, status=status.HTTP_200_OK)
+                return Response({"error":"you are not allowed to process this trx"}, status=status.HTTP_200_OK)
             
             # check if transection already approved
             if not trx.status == 'pending':
-                return Response({"success":"this trx is already processed"}, status=status.HTTP_200_OK)
+                return Response({"error":"this trx is already processed"}, status=status.HTTP_200_OK)
             # validate pin here     
  
             if approval == 'approve': # the withdrawal is approved
@@ -309,8 +327,8 @@ class WithdrawalRequestView(APIView):
                 # print('response: ', response.text)
                 print(approval)
                 reason = request.data.get('reason')
-                cancelled_trx =  createWithdrawalStatusChangeTrx(user,trx,reason,'approved')
-                return Response({"success":"withdrawal cancelled",'data':cancelled_trx}, status=status.HTTP_200_OK)
+                approved_trx =  createWithdrawalStatusChangeTrx(user,trx,reason,'approved')
+                return Response({"success":"approved",'data':approved_trx}, status=status.HTTP_200_OK)
              
                 
             else: # approval == 'cancel' 
@@ -319,8 +337,6 @@ class WithdrawalRequestView(APIView):
                 trx.user.account.deposite(float(trx.amount))
                 reason = request.data.get('reason')
                 cancelled_trx =  createWithdrawalStatusChangeTrx(user,trx,reason,'cancelled')
-                return Response({"success":"withdrawal cancelled",'data':cancelled_trx}, status=status.HTTP_200_OK)
-            
-            # return Response({'data':"success"}, status=status.HTTP_200_OK)
-        # except:
-            # return Response({"error":"server went wrong"}, status=status.HTTP_408_REQUEST_TIMEOUT)
+                return Response({"success":"cancelled",'data':cancelled_trx}, status=status.HTTP_200_OK)
+        except:
+            return Response({"error":"server went wrong"}, status=status.HTTP_408_REQUEST_TIMEOUT)

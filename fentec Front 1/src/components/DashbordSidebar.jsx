@@ -16,7 +16,7 @@ const DashebordSidebar= () => {
     const navigate = useNavigate();
     const checkActive = (navPath) => {
         let current_location = document.location.pathname ;
-        return navPath === current_location ? "active" : ''
+        return navPath === current_location ? "active" : '' 
     }
    const handleButtonClick = (path) => {
         navigate(path);
